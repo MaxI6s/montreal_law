@@ -3,7 +3,7 @@
 # project: montreal_law
 # project_key: NOKEY
 # tracking_system: file-system
-# story_location: /Users/Maxime/dev_ws/montreal_law/_bmad-output/implementation-artifacts
+# story_location: {project-root}/_bmad-output/implementation-artifacts
 
 # STATUS DEFINITIONS:
 # ==================
@@ -39,15 +39,17 @@ last_updated: 2026-05-09
 project: montreal_law
 project_key: NOKEY
 tracking_system: file-system
-story_location: /Users/Maxime/dev_ws/montreal_law/_bmad-output/implementation-artifacts
+story_location: "{project-root}/_bmad-output/implementation-artifacts"
 
 development_status:
+  # === Epic 1: Workspace & Identity Management ===
   epic-1: backlog
   1-1-project-initialization-mock-authentication-core: backlog
   1-2-tenant-user-data-schema: backlog
   1-3-tenant-isolation-rbac-enforcement: backlog
   epic-1-retrospective: optional
-  
+
+  # === Epic 2: Core Document Negotiation Engine ===
   epic-2: backlog
   2-1-contract-upload-clause-parsing: backlog
   2-2-dual-pane-ui-foundation: backlog
@@ -56,14 +58,16 @@ development_status:
   2-5-concurrent-editing-opponent-invites: backlog
   2-6-versioning-sign-off-export: backlog
   epic-2-retrospective: optional
-  
+
+  # === Epic 3: Playbook Management & Private AI Copilot ===
   epic-3: backlog
   3-1-playbook-data-model-manual-entry: backlog
   3-2-playbook-ingestion-review-interface: backlog
   3-3-private-ai-copilot-scanning-violation-detection: backlog
   3-4-private-ai-copilot-redline-suggestions: backlog
   epic-3-retrospective: optional
-  
+
+  # === Epic 4: The AI Conciliator (Dual-Sided Mediation) ===
   epic-4: backlog
   4-1-requesting-conciliation-mutual-consent: backlog
   4-2-ai-conciliator-processing-ui-locking: backlog
@@ -71,7 +75,8 @@ development_status:
   4-4-impasse-manual-overrides: backlog
   4-5-approving-rejecting-ai-compromises: backlog
   epic-4-retrospective: optional
-  
+
+  # === Epic 5: Pipeline Visibility & Compliance ===
   epic-5: backlog
   5-1-sales-pipeline-dashboard: backlog
   5-2-automated-data-incineration-metadata-decoupling: backlog
