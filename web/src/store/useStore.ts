@@ -35,7 +35,7 @@ interface AppState {
   unreadCount: () => number;
 
   // Sign-off State
-  signedOff: Record<string, boolean>;
+  signedOff: Record<string, { vendor: boolean; client: boolean }>;
   executeSignOff: (documentId: string) => void;
 
   // Demo Reset
@@ -58,7 +58,7 @@ export const useStore = create<AppState>()(
   setActiveRole: (role) => set(() => {
     const tenant = role === 'vendor' 
       ? 'Dunder AI Inc.' 
-      : (role === 'client' ? 'Initech Financial Group Inc.' : 'Dunder AI Inc.');
+      : (role === 'client' ? 'Acme Corp' : 'Dunder AI Inc.');
     return { activeRole: role, activeTenant: tenant };
   }),
   
@@ -212,9 +212,19 @@ export const useStore = create<AppState>()(
   // ── Sign-Off ──
   signedOff: {},
   
-  executeSignOff: (documentId) => set((state) => ({
-    signedOff: { ...state.signedOff, [documentId]: true }
-  })),
+  executeSignOff: (documentId) => set((state) => {
+    const current = state.signedOff[documentId] || { vendor: false, client: false };
+    const role = state.activeRole as 'vendor' | 'client';
+    return {
+      signedOff: { 
+        ...state.signedOff, 
+        [documentId]: { 
+          ...current, 
+          [role]: true 
+        } 
+      }
+    };
+  }),
 
   resetState: () => {
     set({

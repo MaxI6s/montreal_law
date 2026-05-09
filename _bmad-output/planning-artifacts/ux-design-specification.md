@@ -3,7 +3,7 @@ stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 inputDocuments: ["prd.md", "product-brief-montreal_law.md", "prfaq-montreal_law.md", "chalenge.md", "project_base.md"]
 ---
 
-# UX Design Specification montreal_law
+# UX Design Specification NegoContract
 
 **Author:** Maxime
 **Date:** 2026-05-09
@@ -14,7 +14,7 @@ inputDocuments: ["prd.md", "product-brief-montreal_law.md", "prfaq-montreal_law.
 
 ### Project Vision
 
-Montreal Law is a centralized, dual-sided B2B SaaS platform that transforms contract negotiation. It eliminates the slow email ping-pong of redlines by bringing Vendor and Client lawyers into a shared workspace. Powered by a unique multi-agent AI system, its standout feature is the AI Conciliator—an intelligent mediator that actively resolves clause conflicts by finding optimal, pre-approved middle grounds between two opposing playbooks, drastically accelerating the path to a signed deal.
+NegoContract is a centralized, dual-sided B2B SaaS platform that transforms contract negotiation. It eliminates the slow email ping-pong of redlines by bringing Vendor and Client lawyers into a shared workspace. Powered by a unique multi-agent AI system, its standout feature is the AI Conciliator—an intelligent mediator that actively resolves clause conflicts by finding optimal, pre-approved middle grounds between two opposing playbooks, drastically accelerating the path to a signed deal.
 
 ### Target Users
 
@@ -37,7 +37,7 @@ Montreal Law is a centralized, dual-sided B2B SaaS platform that transforms cont
 
 ### Defining Experience
 
-The core experience of Montreal Law revolves around the seamless transition from traditional document redlining to intelligent AI mediation. The defining interaction is the moment a negotiation stalls and the users invoke the AI Conciliator. This turns a complex, multi-round argument into a single-click resolution process, where the platform analyzes both playbooks and proposes an optimal middle ground natively within the document interface. 
+The core experience of NegoContract revolves around the seamless transition from traditional document redlining to intelligent AI mediation. The defining interaction is the moment a negotiation stalls and the users invoke the AI Conciliator. This turns a complex, multi-round argument into a single-click resolution process, where the platform analyzes both playbooks and proposes an optimal middle ground natively within the document interface. 
 
 To manage this complexity, the platform introduces a **Clause Extraction Panel**, allowing users to effortlessly toggle between viewing the "raw" traditional document and a Kanban-style board that visualizes the contract clause-by-clause (e.g., To Do, In Review, Conciliating, Resolved).
 
@@ -175,12 +175,12 @@ To manage this complexity, the platform introduces a **Clause Extraction Panel**
 
 ### 2.1 Defining Experience
 
-The defining experience of Montreal Law is the **AI Conciliation Flow**. It is the moment where two opposing lawyers, deadlocked on a specific clause, transition from an adversarial email thread to a collaborative, instantaneous AI-mediated resolution. If we nail the UI for requesting, waiting for, and accepting the Conciliator's middle-ground proposal, we prove the entire value of the platform.
+The defining experience of NegoContract is the **AI Conciliation Flow**. It is the moment where two opposing lawyers, deadlocked on a specific clause, transition from an adversarial email thread to a collaborative, instantaneous AI-mediated resolution. If we nail the UI for requesting, waiting for, and accepting the Conciliator's middle-ground proposal, we prove the entire value of the platform.
 
 ### 2.2 User Mental Model
 
 - **Current Reality:** Lawyers think in terms of "redlines," "track changes," and "margin comments." They expect to read a document linearly and address issues chronologically. 
-- **The Shift:** Montreal Law introduces a parallel mental model: the contract as a database of distinct clauses (the Kanban panel). 
+- **The Shift:** NegoContract introduces a parallel mental model: the contract as a database of distinct clauses (the Kanban panel). 
 - **The Bridge:** To prevent confusion, the UI must keep these two models perfectly synchronized. Clicking a clause in the Kanban board must instantly scroll the raw document to that exact paragraph, and vice versa.
 
 ### 2.3 Success Criteria
@@ -221,7 +221,7 @@ Let's design the step-by-step flow for the AI Conciliation:
 
 ### Color System
 
-To evoke trust and professionalism while clearly distinguishing AI actors, Montreal Law will use a structured semantic color palette built on a neutral foundation:
+To evoke trust and professionalism while clearly distinguishing AI actors, NegoContract will use a structured semantic color palette built on a neutral foundation:
 
 - **Base/Neutral:** Slate or Zinc (Tailwind defaults) for backgrounds, borders, and general text to reduce eye strain during long reading sessions.
 - **Client Actions/AI:** Subtle Blue (`#3B82F6` or `blue-500`). Used for the user's private Copilot suggestions and redlines.
@@ -281,7 +281,7 @@ This direction was chosen because it perfectly supports the dual mental models r
 
 ### 1. The Clause Conciliation Flow
 
-This is the primary mechanic of Montreal Law, where two parties resolve a disputed clause without drafting argumentative emails.
+This is the primary mechanic of NegoContract, where two parties resolve a disputed clause without drafting argumentative emails.
 
 ```mermaid
 flowchart TD
@@ -438,7 +438,7 @@ While `shadcn/ui` provides the primitives, the core experience relies on highly 
 
 ### Responsive Strategy
 
-Montreal Law is fundamentally a **desktop-first** application because legal contract review is a heavy, cognitively demanding task that lawyers almost exclusively perform on large external monitors or laptops. However, the Sales Pipeline Visibility flow requires a solid mobile experience.
+NegoContract is fundamentally a **desktop-first** application because legal contract review is a heavy, cognitively demanding task that lawyers almost exclusively perform on large external monitors or laptops. However, the Sales Pipeline Visibility flow requires a solid mobile experience.
 
 - **Desktop (Primary):** The strict dual-pane layout shines here. The left pane takes ~60% (raw document), and the right pane takes ~40% (Kanban board).
 - **Tablet (Secondary):** The dual-pane approach is modified. The document takes full width, and the Kanban board collapses into an off-canvas drawer that can be toggled on and off, ensuring the document remains readable.

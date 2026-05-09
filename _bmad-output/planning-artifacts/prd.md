@@ -14,18 +14,18 @@ classification:
 workflowType: 'prd'
 ---
 
-# Product Requirements Document - montreal_law
+# Product Requirements Document - NegoContract
 
 **Author:** Maxime
 **Date:** 2026-05-09
 
 ## Executive Summary
 
-Contract negotiation today is an inefficient, fragmented exchange of redlines over email that stalls deals and frustrates both legal and business stakeholders. Montreal Law is a centralized, dual-sided B2B SaaS platform that transforms this process by bringing both vendor and client lawyers into a shared collaborative workspace. The platform eliminates email back-and-forth by allowing users to negotiate natively on the same document with full `.docx` fidelity and strict cross-tenant security boundaries. Ultimately, Montreal Law aims to evolve from a transactional tool into an intelligent Deal Desk ecosystem that advises organizations on optimizing their playbooks to accelerate sales cycles.
+Contract negotiation today is an inefficient, fragmented exchange of redlines over email that stalls deals and frustrates both legal and business stakeholders. NegoContract is a centralized, dual-sided B2B SaaS platform that transforms this process by bringing both vendor and client lawyers into a shared collaborative workspace. The platform eliminates email back-and-forth by allowing users to negotiate natively on the same document with full `.docx` fidelity and strict cross-tenant security boundaries. Ultimately, NegoContract aims to evolve from a transactional tool into an intelligent Deal Desk ecosystem that advises organizations on optimizing their playbooks to accelerate sales cycles.
 
 ### What Makes This Special
 
-While existing tools typically assist only one side of a negotiation against their private playbook, Montreal Law is an active two-sided mediator. Its primary differentiator is the **AI Conciliator**. When the independent playbooks of the vendor and client conflict, the AI Conciliator acts as an impartial assistant—understanding the bounded flexibility, non-negotiables, and fallbacks of both parties. Utilizing the Spellbook ecosystem for industry-standard references, it automatically proposes optimal, pre-approved middle-ground clauses. Crucially, to minimize adoption friction for opposing counsel, the UI mirrors the familiar experience of traditional Word redlining, presenting AI mediation as seamless, non-intrusive suggestions rather than an aggressive automated override.
+While existing tools typically assist only one side of a negotiation against their private playbook, NegoContract is an active two-sided mediator. Its primary differentiator is the **AI Conciliator**. When the independent playbooks of the vendor and client conflict, the AI Conciliator acts as an impartial assistant—understanding the bounded flexibility, non-negotiables, and fallbacks of both parties. Utilizing the Spellbook ecosystem for industry-standard references, it automatically proposes optimal, pre-approved middle-ground clauses. Crucially, to minimize adoption friction for opposing counsel, the UI mirrors the familiar experience of traditional Word redlining, presenting AI mediation as seamless, non-intrusive suggestions rather than an aggressive automated override.
 
 ## Project Classification
 
@@ -69,7 +69,7 @@ While existing tools typically assist only one side of a negotiation against the
 
 ### Journey 1: The Collaborative Negotiation (Vendor & Client Lawyer)
 **Persona:** Sarah (Vendor Lawyer) and Marcus (Client Lawyer).
-**Opening Scene:** Sarah uploads a SaaS MSA into Montreal Law. It operates perfectly as a standalone negotiation platform. Marcus receives the link, reviews the document, and uses the native redlining and commenting tools to make changes. 
+**Opening Scene:** Sarah uploads a SaaS MSA into NegoContract. It operates perfectly as a standalone negotiation platform. Marcus receives the link, reviews the document, and uses the native redlining and commenting tools to make changes. 
 **Rising Action:** They go back and forth seamlessly. However, they reach a hard impasse on the "Limitation of Liability" clause. 
 **Climax:** Rather than sending a fourth email arguing the point, Sarah clicks **"Request AI Conciliation"** for this specific clause. Marcus receives a prompt and clicks "Agree." Only then does the AI Conciliator step in, analyzing both playbooks simultaneously to propose a pre-approved middle ground.
 **Resolution:** They both accept the Conciliator's suggestion. The platform facilitated the standard negotiation, but the AI saved the deal when it stalled.
@@ -77,21 +77,21 @@ While existing tools typically assist only one side of a negotiation against the
 ### Journey 2: The Personal Playbook Copilot (Single-Sided Review)
 **Persona:** Marcus (Client Lawyer).
 **Opening Scene:** Marcus receives a complex, heavily-modified NDA from a vendor. Before he even starts manually redlining, he wants to know where it stands against his firm's rules.
-**Rising Action:** Within Montreal Law, he activates his **Personal AI Copilot**. He asks it to review the incoming document strictly against his private Client Playbook. 
+**Rising Action:** Within NegoContract, he activates his **Personal AI Copilot**. He asks it to review the incoming document strictly against his private Client Playbook. 
 **Climax:** The Copilot privately highlights three clauses that violate his "non-negotiables" and instantly drafts suggested redlines that align with his fallbacks. The vendor cannot see any of this happening.
 **Resolution:** Marcus reviews the AI's suggestions, approves them with one click, and sends the counter-proposal back to the vendor. He utilized AI to supercharge his own review without ever invoking the shared Conciliator.
 
 ### Journey 3: The Deal Desk Observer (Sales Rep)
 **Persona:** David (Sales Rep).
 **Opening Scene:** David's commission depends on the MSA being signed today. Normally, he would email Sarah (Legal) repeatedly to ask for status updates.
-**Rising Action:** Instead, David logs into his Montreal Law Sales Dashboard. 
+**Rising Action:** Instead, David logs into his NegoContract Sales Dashboard. 
 **Climax:** He sees a read-only Kanban board showing exactly where the contract is in the negotiation flow, noting that 14 out of 15 clauses are resolved natively, with the final clause currently in "Active AI Conciliation."
 **Resolution:** David stays out of legal's way but remains in total control of his pipeline visibility.
 
 ### Journey 4: The Playbook Architect (Admin)
 **Persona:** Elena (Managing Partner / Admin).
 **Opening Scene:** Elena wants to speed up the firm's average deal cycle.
-**Rising Action:** She logs into Montreal Law's Admin panel to update the firm's playbooks. 
+**Rising Action:** She logs into NegoContract's Admin panel to update the firm's playbooks. 
 **Climax:** She uses the Playbook Editor to add a new "Fallback Level 2" for Indemnification, giving her junior lawyers and the AI Conciliator more bounded flexibility to reach agreements.
 **Resolution:** Instantly, the new rule is deployed to all ongoing negotiations, optimizing the firm's negotiation velocity.
 

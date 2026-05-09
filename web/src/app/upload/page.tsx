@@ -4,14 +4,20 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { UploadCloud, FileText, Cpu, CheckCircle2, Loader2, FileUp, Sparkles, X } from "lucide-react";
+import { UploadCloud, FileText, Cpu, CheckCircle2, Loader2, FileUp, Sparkles, X, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type ProcessState = "idle" | "uploading" | "parsing" | "analyzing" | "complete";
+type ProcessState = "idle" | "uploading" | "parsing" | "extracting" | "complete";
+
+const PROJECTS = [
+  { id: 'acme-dpa', name: 'Acme Corp - DPA', client: 'Acme Corp.', type: 'DPA' },
+];
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [state, setState] = useState<ProcessState>("idle");
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -50,9 +56,9 @@ export default function UploadPage() {
         
         // Mock Parsing (2 seconds)
         setTimeout(() => {
-          setState("analyzing");
+          setState("extracting");
           
-          // Mock Analyzing (3 seconds)
+          // Mock Extracting (3 seconds)
           setTimeout(() => {
             setState("complete");
             
@@ -68,9 +74,9 @@ export default function UploadPage() {
 
   const steps = [
     { key: "uploading", label: "Uploading Document", icon: FileUp, activeColor: "text-blue-500", doneColor: "text-blue-500" },
-    { key: "parsing", label: "Extracting Clauses & Structure", icon: FileText, activeColor: "text-indigo-500", doneColor: "text-indigo-500" },
-    { key: "analyzing", label: "Running Playbook AI Analysis", icon: Cpu, activeColor: "text-purple-500", doneColor: "text-purple-500" },
-    { key: "complete", label: "Ready for Review", icon: CheckCircle2, activeColor: "text-emerald-500", doneColor: "text-emerald-500" },
+    { key: "parsing", label: "Structural Parsing", icon: FileText, activeColor: "text-indigo-500", doneColor: "text-indigo-500" },
+    { key: "extracting", label: "Intelligent Clause Extraction", icon: Sparkles, activeColor: "text-purple-500", doneColor: "text-purple-500" },
+    { key: "complete", label: "Ready for Legal Review", icon: CheckCircle2, activeColor: "text-emerald-500", doneColor: "text-emerald-500" },
   ];
 
   const getStepStatus = (stepKey: string, currentIndex: number, stepIndex: number) => {
@@ -98,35 +104,69 @@ export default function UploadPage() {
           <AnimatePresence mode="wait">
             {state === "idle" ? (
               <motion.div
-                key="dropzone"
+                key="selection"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="p-12 text-center"
+                className="p-8"
               >
-                <div
-                  className="border-2 border-dashed border-slate-300 rounded-xl p-12 transition-colors hover:border-indigo-400 hover:bg-indigo-50/50 cursor-pointer group"
-                  onDragOver={onDragOver}
-                  onDrop={onDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <input
-                    type="file"
-                    className="hidden"
-                    ref={fileInputRef}
-                    accept=".docx,.pdf,.doc"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files.length > 0) {
-                        handleFileSelect(e.target.files[0]);
-                      }
-                    }}
-                  />
-                  <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform group-hover:bg-indigo-100 group-hover:text-indigo-600 text-slate-400">
-                    <FileUp className="w-8 h-8" />
+                {!selectedProject ? (
+                  <div className="space-y-6">
+                    <div className="text-center mb-6">
+                      <h3 className="text-lg font-semibold text-slate-900">Select Project</h3>
+                      <p className="text-sm text-muted-foreground">Which deal is this contract for?</p>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                      {PROJECTS.map((p) => (
+                        <button
+                          key={p.id}
+                          onClick={() => setSelectedProject(p.id)}
+                          className="flex items-center justify-between p-4 rounded-xl border-2 border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/50 transition-all text-left group"
+                        >
+                          <div>
+                            <div className="font-bold text-slate-900 group-hover:text-indigo-700">{p.name}</div>
+                            <div className="text-sm text-slate-500">{p.type} proposal</div>
+                          </div>
+                          <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-indigo-500 transition-transform group-hover:translate-x-1" />
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <h3 className="text-xl font-semibold text-slate-700 mb-2 group-hover:text-indigo-700">Click to upload or drag and drop</h3>
-                  <p className="text-sm text-slate-500">Word Documents (.docx) or PDFs (max 50MB)</p>
-                </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <Button variant="ghost" size="sm" onClick={() => setSelectedProject(null)} className="text-slate-500">
+                        <X className="w-4 h-4 mr-1.5" /> Back to Project Selection
+                      </Button>
+                      <Badge className="bg-indigo-100 text-indigo-700 border-indigo-200">
+                        {PROJECTS.find(p => p.id === selectedProject)?.name}
+                      </Badge>
+                    </div>
+                    <div
+                      className="border-2 border-dashed border-slate-300 rounded-xl p-12 transition-colors hover:border-indigo-400 hover:bg-indigo-50/50 cursor-pointer group text-center"
+                      onDragOver={onDragOver}
+                      onDrop={onDrop}
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <input
+                        type="file"
+                        className="hidden"
+                        ref={fileInputRef}
+                        accept=".docx,.pdf,.doc"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files.length > 0) {
+                            handleFileSelect(e.target.files[0]);
+                          }
+                        }}
+                      />
+                      <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform group-hover:bg-indigo-100 group-hover:text-indigo-600 text-slate-400">
+                        <FileUp className="w-8 h-8" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-slate-700 mb-2 group-hover:text-indigo-700">Click to upload or drag and drop</h3>
+                      <p className="text-sm text-slate-500">Word Documents (.docx) or PDFs (max 50MB)</p>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             ) : (
               <motion.div
@@ -192,9 +232,9 @@ export default function UploadPage() {
                           {status === "active" && step.key === "parsing" && (
                             <p className="text-xs text-indigo-500 mt-1 animate-pulse">Identifying deviation boundaries...</p>
                           )}
-                          {status === "active" && step.key === "analyzing" && (
+                          {status === "active" && step.key === "extracting" && (
                             <p className="text-xs text-purple-500 mt-1 flex items-center gap-1">
-                              <Sparkles className="w-3 h-3 animate-pulse" /> Evaluating liability and termination constraints...
+                              <Sparkles className="w-3 h-3 animate-pulse" /> Mapping content to playbook standards...
                             </p>
                           )}
                         </div>

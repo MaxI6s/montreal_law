@@ -37,6 +37,7 @@ export interface DocumentInfo {
     client: string;
     vendor: string;
   };
+  status?: 'pending-upload';
 }
 
 export interface Comment {
@@ -54,7 +55,7 @@ export const MOCK_DOCUMENTS: DocumentInfo[] = [
     title: 'Mutual Non-Disclosure Agreement',
     type: 'NDA',
     parties: {
-      client: 'Initech Financial Group Inc.',
+      client: 'Acme Corp',
       vendor: 'Dunder AI Inc.'
     }
   },
@@ -63,7 +64,7 @@ export const MOCK_DOCUMENTS: DocumentInfo[] = [
     title: 'Master Subscription Agreement',
     type: 'MSA',
     parties: {
-      client: 'Initech Financial Group Inc.',
+      client: 'Acme Corp',
       vendor: 'Dunder AI Inc.'
     }
   },
@@ -72,9 +73,10 @@ export const MOCK_DOCUMENTS: DocumentInfo[] = [
     title: 'Data Processing Agreement',
     type: 'DPA',
     parties: {
-      client: 'Acme Corp.',
+      client: 'Acme Corp',
       vendor: 'Dunder AI Inc.'
-    }
+    },
+    status: 'pending-upload'
   }
 ];
 
@@ -146,7 +148,7 @@ export const MOCK_NDA_CLAUSES: Clause[] = [
     title: '7. REMEDIES',
     originalText: "The Parties acknowledge that a breach of this Agreement may cause irreparable harm for which monetary damages may be an inadequate remedy. Accordingly, in addition to any other remedies available at law or in equity, the Disclosing Party shall be entitled to seek equitable relief, including injunctive relief, provided that the Disclosing Party shall be required to post a bond or other security in an amount determined by a court of competent jurisdiction.",
     currentText: "The Parties acknowledge that a breach of this Agreement may cause irreparable harm for which monetary damages may be an inadequate remedy. Accordingly, in addition to any other remedies available at law or in equity, the Disclosing Party shall be entitled to seek equitable relief, including injunctive relief, and neither Party shall be required to post any bond or other security as a condition of obtaining such relief.",
-    status: 'disputed',
+    status: 'client-modified',
     lastModifiedBy: 'client'
   },
   {
@@ -382,9 +384,9 @@ export const MOCK_INITIAL_COMMENTS: Comment[] = [
 export const MOCK_INITIAL_NOTIFICATIONS: SalesNotification[] = [
   {
     id: 'notif-1',
-    type: 'urgent',
+    type: 'info',
     from: 'Sarah Chen (Vendor Legal)',
-    message: 'Clause 7 (Remedies) is under active dispute with Client. Bond requirement is a dealbreaker — may need your input on commercial flexibility.',
+    message: 'Client has proposed a significant change to Section 7 (Remedies) — they are requesting mutual injunctive relief without a bond requirement. Awaiting your review.',
     clauseTitle: '7. REMEDIES',
     documentId: 'doc-nda-1',
     timestamp: new Date(Date.now() - 12 * 60000).toISOString(),

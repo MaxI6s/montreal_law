@@ -16,7 +16,7 @@ const merriweather = Merriweather({
 });
 
 export const metadata: Metadata = {
-  title: "Montreal Law - Hackathon Demo",
+  title: "NegoContract - Hackathon Demo",
   description: "AI-powered contract negotiation platform",
 };
 

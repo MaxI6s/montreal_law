@@ -43,7 +43,7 @@ export default function TopNav() {
         {/* Left: Branding */}
         <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity group">
           <Shield className="h-6 w-6 text-indigo-600 group-hover:scale-110 transition-transform" />
-          <span className="font-bold text-lg tracking-tight">Montreal Law</span>
+          <span className="font-bold text-lg tracking-tight">NegoContract</span>
         </Link>
 
         {/* Center: Navigation */}

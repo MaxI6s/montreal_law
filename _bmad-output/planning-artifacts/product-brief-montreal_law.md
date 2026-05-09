@@ -1,15 +1,15 @@
 ---
-title: "Product Brief: montreal_law"
+title: "Product Brief: NegoContract"
 status: "complete"
 created: "2026-05-09T14:35:00Z"
 updated: "2026-05-09T14:38:00Z"
 inputs: ["chalenge.md", "project_base.md"]
 ---
 
-# Product Brief: Montreal Law (Spellbook Challenge)
+# Product Brief: NegoContract (Spellbook Challenge)
 
 ## Executive Summary
-Contract negotiation is currently a slow, fragmented "ping-pong" game of redlines over email, frustrating both legal teams and business stakeholders. Montreal Law is a B2B SaaS platform that transforms this process by bringing Vendor and Client lawyers onto a single, collaborative workspace. Powered by a unique multi-agent AI system—featuring dedicated playbook agents for each side and a central AI Conciliator—the platform automatically resolves conflicting clauses by finding a pre-approved middle ground, drastically accelerating the path to a signed deal.
+Contract negotiation is currently a slow, fragmented "ping-pong" game of redlines over email, frustrating both legal teams and business stakeholders. NegoContract is a B2B SaaS platform that transforms this process by bringing Vendor and Client lawyers onto a single, collaborative workspace. Powered by a unique multi-agent AI system—featuring dedicated playbook agents for each side and a central AI Conciliator—the platform automatically resolves conflicting clauses by finding a pre-approved middle ground, drastically accelerating the path to a signed deal.
 
 ## The Problem
 Today, B2B contract negotiation is painful and inefficient. A vendor sends a contract; the client's lawyer redlines it in Word; the vendor's lawyer reviews and counters. This cycle repeats, resulting in:
@@ -18,7 +18,7 @@ Today, B2B contract negotiation is painful and inefficient. A vendor sends a con
 - **Delayed Revenue:** Deals stall because finding a middle ground on boilerplate clauses takes weeks instead of minutes.
 
 ## The Solution
-Montreal Law is a centralized negotiation platform where lawyers from both organizations collaborate directly on the same document with high-fidelity Word/PDF support and native track changes. 
+NegoContract is a centralized negotiation platform where lawyers from both organizations collaborate directly on the same document with high-fidelity Word/PDF support and native track changes. 
 
 The core engine is driven by three AI agents:
 1. **Vendor AI Agent:** Replaces incoming redlines against the Vendor's codified playbook.
@@ -27,7 +27,7 @@ The core engine is driven by three AI agents:
 4. **Escalation Path:** If the Conciliator cannot find a viable middle ground, it generates a "block brief" detailing the specific impasse for each entity and schedules a direct meeting for the lawyers to either resolve the issue manually or stop the negotiation.
 
 ## What Makes This Different
-While existing tools use AI to help *one* side review a contract against a playbook, Montreal Law is a **two-sided platform** that actively mediates. The differentiator is the AI Conciliator: instead of just flagging risks, it actively proposes the optimal compromise by understanding the bounded flexibility of both parties and referencing Spellbook's industry-standard intelligence. 
+While existing tools use AI to help *one* side review a contract against a playbook, NegoContract is a **two-sided platform** that actively mediates. The differentiator is the AI Conciliator: instead of just flagging risks, it actively proposes the optimal compromise by understanding the bounded flexibility of both parties and referencing Spellbook's industry-standard intelligence. 
 
 ## Who This Serves
 - **Primary:** **Vendor Lawyers & Client Lawyers** (In-house counsel or external firms) who want to reduce time spent on routine redlines and focus on high-risk strategic terms.
@@ -52,4 +52,4 @@ While existing tools use AI to help *one* side review a contract against a playb
 - Advanced analytics dashboards.
 
 ## Vision
-If successful, Montreal Law evolves from a transactional negotiation tool into an intelligent Deal Desk ecosystem. By analyzing thousands of resolved conflicts, the system will eventually advise organizations on how to optimize their playbooks—showing them exactly which clauses are slowing down their sales cycles and suggesting data-backed alternatives.
+If successful, NegoContract evolves from a transactional negotiation tool into an intelligent Deal Desk ecosystem. By analyzing thousands of resolved conflicts, the system will eventually advise organizations on how to optimize their playbooks—showing them exactly which clauses are slowing down their sales cycles and suggesting data-backed alternatives.

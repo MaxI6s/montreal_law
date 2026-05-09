@@ -1,13 +1,13 @@
 ---
 stepsCompleted: ["step-01-validate-prerequisites", "step-02-design-epics", "step-03-create-stories"]
-inputDocuments: ["prd.md", "architecture.md", "ux-design-specification.md", "ux-design-directions.html", "product-brief-montreal_law.md"]
+inputDocuments: ["prd.md", "architecture.md", "ux-design-specification.md", "ux-design-directions.html", "product-brief-NegoContract.md"]
 ---
 
-# montreal_law - Epic Breakdown
+# NegoContract - Epic Breakdown
 
 ## Overview
 
-This document provides the complete epic and story breakdown for montreal_law, decomposing the requirements from the PRD, UX Design if it exists, and Architecture requirements into implementable stories.
+This document provides the complete epic and story breakdown for NegoContract, decomposing the requirements from the PRD, UX Design if it exists, and Architecture requirements into implementable stories.
 
 ## Requirements Inventory
 

@@ -68,7 +68,7 @@ export default function LandingPage() {
           
           {/* Subtitle */}
           <motion.p variants={itemVariants} className="max-w-2xl mx-auto text-xl text-slate-400 leading-relaxed">
-            Montreal Law resolves contract disputes instantly by analyzing <strong className="text-slate-200">both parties&apos; playbooks</strong> and proposing industry-standard compromises — in seconds, not weeks.
+            NegoContract resolves contract disputes instantly by analyzing <strong className="text-slate-200">both parties&apos; playbooks</strong> and proposing industry-standard compromises — in seconds, not weeks.
           </motion.p>
           
           {/* CTAs */}

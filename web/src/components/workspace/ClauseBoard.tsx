@@ -38,7 +38,10 @@ export default function ClauseBoard() {
   const isVendor = activeRole === 'vendor';
   const isClient = activeRole === 'client';
   const allResolved = currentClauses.length > 0 && currentClauses.every(c => c.status === 'resolved');
-  const isDocSignedOff = signedOff[activeDocumentId] || false;
+  
+  const docSignOffStatus = signedOff[activeDocumentId] || { vendor: false, client: false };
+  const isDocSignedOff = docSignOffStatus.vendor && docSignOffStatus.client;
+  const iHaveSigned = (isVendor && docSignOffStatus.vendor) || (isClient && docSignOffStatus.client);
 
   const toggleDiscussion = (clauseId: string) => {
     setOpenDiscussions(prev => {
@@ -77,7 +80,6 @@ export default function ClauseBoard() {
     const label = isVendor ? 'Vendor Legal' : 'Client Legal';
     toast.success("Edit Recorded", { description: `${label} has proposed changes. Awaiting opposing counsel's response.` });
     
-    // FR22: Send notification to opposing counsel
     addNotification({
       type: 'info', from: label,
       message: `${label} has proposed changes to "${title}".`,
@@ -91,7 +93,6 @@ export default function ClauseBoard() {
     const label = isVendor ? 'Vendor Legal' : 'Client Legal';
     toast.success("Clause Accepted ✓", { description: `${label} has accepted this clause language.` });
     
-    // FR22: Send notification to opposing counsel
     addNotification({
       type: 'info', from: label,
       message: `${label} has accepted the language for "${title}".`,
@@ -136,7 +137,12 @@ export default function ClauseBoard() {
 
   const handleSignOff = () => {
     executeSignOff(activeDocumentId);
-    toast.success("🎉 Mutual Sign-Off Executed!", { description: "Both parties have agreed. The document is now frozen for export.", duration: 5000 });
+    const party = isVendor ? 'Vendor' : 'Acme Corp';
+    toast.success(`${party} Sign-Off Recorded`, { 
+      description: isDocSignedOff 
+        ? "Mutual agreement reached! Document is now available for download." 
+        : `Awaiting ${isVendor ? 'Acme Corp' : 'Vendor'} sign-off to finalize.`
+    });
   };
 
   const actionRequired = currentClauses.filter(c => isMyTurn(c) && c.status !== 'backlog' && c.status !== 'resolved');
@@ -168,28 +174,55 @@ export default function ClauseBoard() {
           {/* Sign-Off Banner */}
           {allResolved && !isSales && (
             <div className={cn(
-              "rounded-xl border-2 p-5 text-center space-y-3 transition-all",
+              "rounded-xl border-2 p-5 text-center space-y-4 transition-all",
               isDocSignedOff
-                ? "bg-emerald-50 border-emerald-300"
-                : "bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200"
+                ? "bg-emerald-50 border-emerald-300 shadow-lg"
+                : "bg-gradient-to-r from-slate-50 to-indigo-50/30 border-slate-200"
             )}>
               {isDocSignedOff ? (
                 <>
-                  <PartyPopper className="w-10 h-10 mx-auto text-emerald-600" />
-                  <h3 className="text-lg font-bold text-emerald-800">Document Signed Off ✓</h3>
-                  <p className="text-sm text-emerald-700">Both parties have agreed. The document state is frozen.</p>
-                  <Button variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-100" onClick={(e) => { e.stopPropagation(); toast.info("Export Mock", { description: "In production, this would download the final .docx file." }); }}>
-                    <FileDown className="w-4 h-4 mr-2" /> Download Final .docx
+                  <PartyPopper className="w-10 h-10 mx-auto text-emerald-600 animate-bounce" />
+                  <h3 className="text-lg font-bold text-emerald-800">Mutual Sign-Off Complete ✓</h3>
+                  <p className="text-sm text-emerald-700">Both Acme Corp and Dunder AI have executed sign-off.</p>
+                  <Button variant="default" className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-md" onClick={(e) => { e.stopPropagation(); toast.info("Export Mock", { description: "In production, this would download the final .docx file." }); }}>
+                    <FileDown className="w-4 h-4 mr-2" /> Download Executed .docx
                   </Button>
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="w-10 h-10 mx-auto text-indigo-600" />
-                  <h3 className="text-lg font-bold text-indigo-800">All {currentClauses.length} Clauses Resolved</h3>
-                  <p className="text-sm text-indigo-700">Ready for mutual sign-off and final export.</p>
-                  <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg" onClick={handleSignOff}>
-                    Execute Mutual Sign-Off
-                  </Button>
+                  <div className="flex justify-center gap-6 mb-2">
+                    <div className="flex flex-col items-center gap-1">
+                      <div className={cn("p-2 rounded-full shadow-sm", docSignOffStatus.vendor ? "bg-emerald-100 text-emerald-600" : "bg-slate-100 text-slate-400")}>
+                        <CheckCircle2 className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider">Vendor</span>
+                    </div>
+                    <div className="w-12 h-[2px] bg-slate-200 mt-4" />
+                    <div className="flex flex-col items-center gap-1">
+                      <div className={cn("p-2 rounded-full shadow-sm", docSignOffStatus.client ? "bg-emerald-100 text-emerald-600" : "bg-slate-100 text-slate-400")}>
+                        <CheckCircle2 className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider">Acme Corp</span>
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-800">Awaiting Mutual Sign-Off</h3>
+                  <p className="text-sm text-slate-600">Both parties must execute sign-off to enable the final download.</p>
+                  
+                  {iHaveSigned ? (
+                    <div className="bg-white/50 border border-emerald-100 rounded-lg p-3 inline-flex items-center gap-2 text-emerald-700 text-sm font-medium">
+                      <Clock className="w-4 h-4 animate-spin" style={{ animationDuration: '3s' }} /> Your sign-off is recorded. Waiting for opposing counsel.
+                    </div>
+                  ) : (
+                    <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg px-8 transition-transform hover:scale-105" onClick={handleSignOff}>
+                      Sign-Off as {isVendor ? 'Vendor' : 'Acme Corp'}
+                    </Button>
+                  )}
+                  
+                  <div className="pt-2">
+                    <Button variant="ghost" size="sm" className="text-[10px] text-muted-foreground cursor-not-allowed opacity-50" disabled>
+                      <FileDown className="w-3 h-3 mr-1" /> Download disabled until mutual sign-off
+                    </Button>
+                  </div>
                 </>
               )}
             </div>

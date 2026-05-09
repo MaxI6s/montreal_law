@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { MOCK_DOCUMENTS } from "@/lib/mock-data";
 import { useStore } from "@/store/useStore";
 import { 
@@ -10,6 +10,7 @@ import {
   X, TrendingUp, FileText, Lock, AlertTriangle, ArrowRight, Bot
 } from "lucide-react";
 import { useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -42,9 +43,10 @@ export default function SalesDashboard() {
     return { total: docClauses.length, resolved, disputed, pending, active, backlog };
   };
 
-  const getDealStage = (docId: string) => {
-    const summary = getClauseSummary(docId);
-    if (summary.resolved === summary.total) return 'ready-for-signoff';
+  const getDealStage = (doc: typeof MOCK_DOCUMENTS[0]) => {
+    if (doc.status === 'pending-upload') return 'pending-upload';
+    const summary = getClauseSummary(doc.id);
+    if (summary.resolved === summary.total && summary.total > 0) return 'ready-for-signoff';
     if (summary.disputed > 0 || summary.pending > 0) return 'at-risk';
     if (summary.active > 0) return 'active-negotiation';
     return 'early-stage';
@@ -55,6 +57,11 @@ export default function SalesDashboard() {
     'at-risk': { label: 'At Risk — Disputes', color: 'bg-red-100 text-red-800 border-red-200', icon: AlertTriangle },
     'active-negotiation': { label: 'Active Negotiation', color: 'bg-blue-100 text-blue-800 border-blue-200', icon: TrendingUp },
     'early-stage': { label: 'Early Stage', color: 'bg-slate-100 text-slate-800 border-slate-200', icon: Clock },
+    'pending-upload': { label: 'Awaiting Upload', color: 'bg-amber-100 text-amber-800 border-amber-200', icon: Bot },
+  };
+
+  const hasNotification = (docId: string) => {
+    return notifications.some(n => n.documentId === docId);
   };
 
   const formatTime = (timestamp: string) => {
@@ -100,16 +107,23 @@ export default function SalesDashboard() {
               {MOCK_DOCUMENTS.map((doc) => {
                 const progress = getDocProgress(doc.id);
                 const summary = getClauseSummary(doc.id);
-                const stage = getDealStage(doc.id);
-                const config = stageConfig[stage];
+                const stage = getDealStage(doc);
+                const config = stageConfig[stage as keyof typeof stageConfig];
                 const StageIcon = config.icon;
+                const canView = stage === 'ready-for-signoff' || hasNotification(doc.id);
 
                 return (
-                  <Card key={doc.id} className="border-2 hover:shadow-lg transition-all relative overflow-hidden">
+                  <Card key={doc.id} className={cn(
+                    "border-2 hover:shadow-lg transition-all relative overflow-hidden",
+                    doc.status === 'pending-upload' && "border-dashed opacity-80"
+                  )}>
                     {/* Risk Indicator Bar */}
                     <div className={cn(
                       "absolute top-0 left-0 right-0 h-1",
-                      stage === 'at-risk' ? 'bg-red-500' : stage === 'ready-for-signoff' ? 'bg-emerald-500' : 'bg-blue-500'
+                      stage === 'at-risk' ? 'bg-red-500' : 
+                      stage === 'ready-for-signoff' ? 'bg-emerald-500' : 
+                      stage === 'pending-upload' ? 'bg-amber-400' :
+                      'bg-blue-500'
                     )} />
 
                     <CardHeader className="pb-4 pt-5">
@@ -118,64 +132,107 @@ export default function SalesDashboard() {
                           <CardTitle className="text-xl mb-1">{doc.parties.client}</CardTitle>
                           <CardDescription className="text-sm">{doc.title} ({doc.type})</CardDescription>
                         </div>
-                        <StageIcon className={cn("w-6 h-6", stage === 'at-risk' ? 'text-red-500' : stage === 'ready-for-signoff' ? 'text-emerald-500' : 'text-blue-500')} />
+                        <StageIcon className={cn(
+                          "w-6 h-6", 
+                          stage === 'at-risk' ? 'text-red-500' : 
+                          stage === 'ready-for-signoff' ? 'text-emerald-500' : 
+                          stage === 'pending-upload' ? 'text-amber-500' :
+                          'text-blue-500'
+                        )} />
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {/* Progress Bar */}
-                      <div>
-                        <div className="flex justify-between text-sm mb-2 font-medium">
-                          <span>Clause Resolution</span>
-                          <span className="font-mono">{summary.resolved}/{summary.total}</span>
+                      {stage === 'pending-upload' ? (
+                        <div className="py-6 text-center space-y-3">
+                          <Bot className="w-10 h-10 mx-auto text-amber-500 animate-pulse" />
+                          <div className="space-y-1">
+                            <p className="text-sm font-semibold text-slate-900">Awaiting Contract Ingestion</p>
+                            <p className="text-xs text-muted-foreground">Legal team has not yet uploaded the document.</p>
+                          </div>
+                          <Link 
+                            href="/upload" 
+                            className={cn(
+                              buttonVariants({ variant: "outline", size: "sm" }),
+                              "w-full border-amber-200 text-amber-700 bg-amber-50"
+                            )}
+                          >
+                            Notify Legal <ArrowRight className="w-4 h-4 ml-1.5" />
+                          </Link>
                         </div>
-                        <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-                          <motion.div 
-                            className={cn("h-3 rounded-full", progress === 100 ? 'bg-emerald-500' : 'bg-blue-600')}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${progress}%` }}
-                            transition={{ duration: 1, ease: "easeOut" }}
-                          />
-                        </div>
-                      </div>
+                      ) : (
+                        <>
+                          {/* Progress Bar */}
+                          <div>
+                            <div className="flex justify-between text-sm mb-2 font-medium">
+                              <span>Clause Resolution</span>
+                              <span className="font-mono">{summary.resolved}/{summary.total}</span>
+                            </div>
+                            <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                              <motion.div 
+                                className={cn("h-3 rounded-full", progress === 100 ? 'bg-emerald-500' : 'bg-blue-600')}
+                                initial={{ width: 0 }}
+                                animate={{ width: `${progress}%` }}
+                                transition={{ duration: 1, ease: "easeOut" }}
+                              />
+                            </div>
+                          </div>
 
-                      {/* Clause Breakdown */}
-                      <div className="grid grid-cols-3 gap-2 text-center">
-                        {summary.disputed > 0 && (
-                          <div className="p-2 rounded-lg bg-red-50 border border-red-100">
-                            <div className="text-lg font-bold text-red-700">{summary.disputed}</div>
-                            <div className="text-[10px] font-medium text-red-600 uppercase">Disputed</div>
+                          {/* Clause Breakdown */}
+                          <div className="grid grid-cols-3 gap-2 text-center">
+                            {summary.disputed > 0 && (
+                              <div className="p-2 rounded-lg bg-red-50 border border-red-100">
+                                <div className="text-lg font-bold text-red-700">{summary.disputed}</div>
+                                <div className="text-[10px] font-medium text-red-600 uppercase">Disputed</div>
+                              </div>
+                            )}
+                            {summary.active > 0 && (
+                              <div className="p-2 rounded-lg bg-blue-50 border border-blue-100">
+                                <div className="text-lg font-bold text-blue-700">{summary.active}</div>
+                                <div className="text-[10px] font-medium text-blue-600 uppercase">In Review</div>
+                              </div>
+                            )}
+                            {summary.pending > 0 && (
+                              <div className="p-2 rounded-lg bg-indigo-50 border border-indigo-100">
+                                <div className="text-lg font-bold text-indigo-700">{summary.pending}</div>
+                                <div className="text-[10px] font-medium text-indigo-600 uppercase">AI Active</div>
+                              </div>
+                            )}
+                            {summary.backlog > 0 && (
+                              <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                                <div className="text-lg font-bold text-slate-600">{summary.backlog}</div>
+                                <div className="text-[10px] font-medium text-slate-500 uppercase">Backlog</div>
+                              </div>
+                            )}
+                            <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-100">
+                              <div className="text-lg font-bold text-emerald-700">{summary.resolved}</div>
+                              <div className="text-[10px] font-medium text-emerald-600 uppercase">Resolved</div>
+                            </div>
                           </div>
-                        )}
-                        {summary.active > 0 && (
-                          <div className="p-2 rounded-lg bg-blue-50 border border-blue-100">
-                            <div className="text-lg font-bold text-blue-700">{summary.active}</div>
-                            <div className="text-[10px] font-medium text-blue-600 uppercase">In Review</div>
-                          </div>
-                        )}
-                        {summary.pending > 0 && (
-                          <div className="p-2 rounded-lg bg-indigo-50 border border-indigo-100">
-                            <div className="text-lg font-bold text-indigo-700">{summary.pending}</div>
-                            <div className="text-[10px] font-medium text-indigo-600 uppercase">AI Active</div>
-                          </div>
-                        )}
-                        {summary.backlog > 0 && (
-                          <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                            <div className="text-lg font-bold text-slate-600">{summary.backlog}</div>
-                            <div className="text-[10px] font-medium text-slate-500 uppercase">Backlog</div>
-                          </div>
-                        )}
-                        <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-100">
-                          <div className="text-lg font-bold text-emerald-700">{summary.resolved}</div>
-                          <div className="text-[10px] font-medium text-emerald-600 uppercase">Resolved</div>
-                        </div>
-                      </div>
+                        </>
+                      )}
 
-                      {/* Stage Badge */}
+                      {/* Stage Badge & Action */}
                       <div className="flex items-center justify-between pt-2 border-t">
-                        <span className="text-sm text-muted-foreground">Deal Stage</span>
                         <Badge className={cn("font-medium border", config.color)}>
                           <StageIcon className="w-3 h-3 mr-1" /> {config.label}
                         </Badge>
+                        {canView && stage !== 'pending-upload' ? (
+                          <Link 
+                            href={`/workspace/${doc.id}`}
+                            className={cn(
+                              buttonVariants({ variant: "ghost", size: "sm" }),
+                              "h-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 font-semibold"
+                            )}
+                          >
+                            View Document <ArrowRight className="w-4 h-4 ml-1.5" />
+                          </Link>
+                        ) : (
+                          stage !== 'pending-upload' && (
+                            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <Lock className="w-3 h-3" /> Hidden until notified
+                            </span>
+                          )
+                        )}
                       </div>
                     </CardContent>
                   </Card>
