@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ConciliatorDialog from './ConciliatorDialog';
 import DiscussionThread from './DiscussionThread';
 import { toast } from 'sonner';
@@ -69,18 +70,33 @@ export default function ClauseBoard() {
     setSelectedClause(id);
   };
 
-  const saveEdit = (e: React.MouseEvent, id: string) => {
+  const saveEdit = (e: React.MouseEvent, id: string, title: string) => {
     e.stopPropagation();
     updateClauseText(activeDocumentId, id, editValue);
     setEditingId(null);
     const label = isVendor ? 'Vendor Legal' : 'Client Legal';
     toast.success("Edit Recorded", { description: `${label} has proposed changes. Awaiting opposing counsel's response.` });
+    
+    // FR22: Send notification to opposing counsel
+    addNotification({
+      type: 'info', from: label,
+      message: `${label} has proposed changes to "${title}".`,
+      clauseTitle: title, documentId: activeDocumentId,
+    });
   };
 
-  const handleAccept = (e: React.MouseEvent, id: string) => {
+  const handleAccept = (e: React.MouseEvent, id: string, title: string) => {
     e.stopPropagation();
     updateClauseStatus(activeDocumentId, id, 'resolved');
-    toast.success("Clause Accepted ✓", { description: `${isVendor ? 'Vendor' : 'Client'} Legal has accepted this clause language.` });
+    const label = isVendor ? 'Vendor Legal' : 'Client Legal';
+    toast.success("Clause Accepted ✓", { description: `${label} has accepted this clause language.` });
+    
+    // FR22: Send notification to opposing counsel
+    addNotification({
+      type: 'info', from: label,
+      message: `${label} has accepted the language for "${title}".`,
+      clauseTitle: title, documentId: activeDocumentId,
+    });
   };
 
   const handleRemove = (e: React.MouseEvent, id: string) => {
@@ -110,6 +126,12 @@ export default function ClauseBoard() {
     setSelectedClause(clauseId);
     setConciliatorClauseId(clauseId);
     setConciliatorOpen(true);
+  };
+
+  const handleCancelConciliation = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    updateClauseStatus(activeDocumentId, id, 'disputed');
+    toast.info("Conciliation Cancelled", { description: "The AI processing was aborted. The clause is disputed again." });
   };
 
   const handleSignOff = () => {
@@ -189,28 +211,40 @@ export default function ClauseBoard() {
                   {Icon && <Icon className={cn("w-4 h-4", label === 'AI CONCILIATION' && "animate-pulse")} />}
                   {label} ({items.length})
                 </div>
-                {items.map((clause) => (
-                  <ClauseCard
-                    key={clause.id} clause={clause}
-                    isSelected={selectedClauseId === clause.id}
-                    isEditing={editingId === clause.id}
-                    editValue={editValue} setEditValue={setEditValue}
-                    onSelect={() => setSelectedClause(clause.id)}
-                    onStartEdit={(e) => startEdit(e, clause.id, clause.currentText)}
-                    onSaveEdit={(e) => saveEdit(e, clause.id)}
-                    onCancelEdit={() => setEditingId(null)}
-                    onAccept={(e) => handleAccept(e, clause.id)}
-                    onRemove={(e) => handleRemove(e, clause.id)}
-                    onNotifySales={(e) => handleNotifySales(e, clause)}
-                    onCounterPropose={(e) => handleCounterPropose(e, clause.id, clause.currentText)}
-                    onRequestConciliation={(e) => handleRequestConciliation(e, clause.id)}
-                    onToggleDiscussion={() => toggleDiscussion(clause.id)}
-                    activeRole={activeRole} highlight={highlight}
-                    isDiscussionOpen={openDiscussions.has(clause.id)}
-                    commentCount={(comments[clause.id] || []).length}
-                    accentColor={accentColor}
-                  />
-                ))}
+                <AnimatePresence mode="popLayout">
+                  {items.map((clause) => (
+                    <motion.div 
+                      key={clause.id} 
+                      layout 
+                      initial={{ opacity: 0, y: 15 }} 
+                      animate={{ opacity: 1, y: 0 }} 
+                      exit={{ opacity: 0, scale: 0.95 }} 
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ClauseCard
+                        clause={clause}
+                        isSelected={selectedClauseId === clause.id}
+                        isEditing={editingId === clause.id}
+                        editValue={editValue} setEditValue={setEditValue}
+                        onSelect={() => setSelectedClause(clause.id)}
+                        onStartEdit={(e) => startEdit(e, clause.id, clause.currentText)}
+                        onSaveEdit={(e) => saveEdit(e, clause.id, clause.title)}
+                        onCancelEdit={() => setEditingId(null)}
+                        onAccept={(e) => handleAccept(e, clause.id, clause.title)}
+                        onRemove={(e) => handleRemove(e, clause.id)}
+                        onNotifySales={(e) => handleNotifySales(e, clause)}
+                        onCounterPropose={(e) => handleCounterPropose(e, clause.id, clause.currentText)}
+                        onRequestConciliation={(e) => handleRequestConciliation(e, clause.id)}
+                        onCancelConciliation={(e) => handleCancelConciliation(e, clause.id)}
+                        onToggleDiscussion={() => toggleDiscussion(clause.id)}
+                        activeRole={activeRole} highlight={highlight}
+                        isDiscussionOpen={openDiscussions.has(clause.id)}
+                        commentCount={(comments[clause.id] || []).length}
+                        accentColor={accentColor}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
             );
           })}
@@ -237,7 +271,8 @@ interface ClauseCardProps {
   onSaveEdit: (e: React.MouseEvent) => void; onCancelEdit: () => void;
   onAccept: (e: React.MouseEvent) => void; onRemove: (e: React.MouseEvent) => void;
   onNotifySales: (e: React.MouseEvent) => void; onCounterPropose: (e: React.MouseEvent) => void;
-  onRequestConciliation: (e: React.MouseEvent) => void; onToggleDiscussion: () => void;
+  onRequestConciliation: (e: React.MouseEvent) => void; onCancelConciliation: (e: React.MouseEvent) => void; 
+  onToggleDiscussion: () => void;
   activeRole: string; highlight: 'action' | 'waiting' | 'processing' | 'backlog' | 'resolved';
   isDiscussionOpen: boolean; commentCount: number; accentColor: string;
 }
@@ -245,7 +280,7 @@ interface ClauseCardProps {
 function ClauseCard({
   clause, isSelected, isEditing, editValue, setEditValue,
   onSelect, onStartEdit, onSaveEdit, onCancelEdit, onAccept, onRemove,
-  onNotifySales, onCounterPropose, onRequestConciliation, onToggleDiscussion,
+  onNotifySales, onCounterPropose, onRequestConciliation, onCancelConciliation, onToggleDiscussion,
   activeRole, highlight, isDiscussionOpen, commentCount, accentColor
 }: ClauseCardProps) {
   const isSales = activeRole === 'sales';
@@ -277,6 +312,7 @@ function ClauseCard({
   const canConciliate = !isSales && !isResolved && !isProcessing && (
     clause.status === 'disputed' || clause.status === 'vendor-modified' || clause.status === 'client-modified'
   );
+  const canCancelConciliation = !isSales && isProcessing;
   const canNotifySales = isVendor && !isResolved;
 
   return (
@@ -331,13 +367,19 @@ function ClauseCard({
         {isDiscussionOpen && <DiscussionThread clauseId={clause.id} />}
       </CardContent>
 
-      {!isEditing && !isSales && (
+      {(!isEditing && !isSales && (!isResolved || commentCount > 0)) && (
         <CardFooter className="p-4 pt-0 flex flex-wrap gap-2 items-center justify-between">
           <div className="flex flex-wrap gap-1.5">
             <Button variant="ghost" size="sm" className="h-8 px-2 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); onToggleDiscussion(); }}>
               <MessageSquare className="w-4 h-4 mr-1.5" />
-              {commentCount > 0 ? `${commentCount}` : 'Discuss'}
+              {commentCount > 0 ? `${commentCount} Comments` : 'Discuss'}
               {isDiscussionOpen ? <ChevronUp className="w-3 h-3 ml-1" /> : <ChevronDown className="w-3 h-3 ml-1" />}
+            </Button>
+            <Button variant="ghost" size="sm" className="h-8 px-2 text-muted-foreground hover:text-foreground" onClick={(e) => { 
+              e.stopPropagation(); 
+              toast("Version History", { description: "1. Draft Created\n2. Modified\n3. Current State" }); 
+            }}>
+              <Clock className="w-4 h-4 mr-1.5" /> History
             </Button>
             {canEdit && (
               <Button variant="ghost" size="sm" className="h-8 px-2 text-muted-foreground hover:text-foreground" onClick={onStartEdit}>
@@ -359,6 +401,11 @@ function ClauseCard({
             {canCounterPropose && (
               <Button size="sm" variant="secondary" className={cn("h-8", isVendor ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-blue-100 text-blue-700 hover:bg-blue-200")} onClick={onCounterPropose}>
                 <ArrowRightLeft className="w-4 h-4 mr-1" /> Counter-Propose
+              </Button>
+            )}
+            {canCancelConciliation && (
+              <Button size="sm" variant="outline" className="h-8 border-red-200 text-red-600 hover:bg-red-50" onClick={onCancelConciliation}>
+                <X className="w-4 h-4 mr-1" /> Cancel
               </Button>
             )}
             {canConciliate && (

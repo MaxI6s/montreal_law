@@ -4,8 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, FileText, Bot, Zap, Shield, Scale, Lock, Users } from "lucide-react";
 import { motion } from "framer-motion";
+import { useStore } from "@/store/useStore";
 
 export default function LandingPage() {
+  const { activeRole } = useStore();
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -70,9 +73,9 @@ export default function LandingPage() {
           
           {/* CTAs */}
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-            <Link href="/workspace">
+            <Link href={activeRole === 'sales' ? "/sales" : "/workspace"}>
               <Button size="lg" className="h-14 px-8 text-lg bg-indigo-600 hover:bg-indigo-500 shadow-xl shadow-indigo-600/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all duration-300 border border-indigo-500/30">
-                Launch Legal Workspace <ArrowRight className="ml-2 w-5 h-5" />
+                {activeRole === 'sales' ? 'Launch Sales Dashboard' : 'Launch Legal Workspace'} <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
             <Link href="/sales">
@@ -288,9 +291,9 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-black mb-4">Ready to close deals faster?</h2>
           <p className="text-slate-500 mb-8">Experience the future of contract negotiation.</p>
-          <Link href="/workspace">
+          <Link href={activeRole === 'sales' ? "/sales" : "/workspace"}>
             <Button size="lg" className="h-14 px-10 text-lg bg-indigo-600 hover:bg-indigo-500 shadow-xl shadow-indigo-600/25 transition-all duration-300 border border-indigo-500/30">
-              Enter the Workspace <ArrowRight className="ml-2 w-5 h-5" />
+              {activeRole === 'sales' ? 'Enter Sales Dashboard' : 'Enter the Workspace'} <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </Link>
         </div>

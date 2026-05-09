@@ -83,7 +83,7 @@ export default function DocumentViewer() {
         </div>
 
         {currentClauses.map((clause) => {
-          const hasChanges = clause.originalText !== clause.currentText;
+          const hasChanges = clause.originalText !== clause.currentText && clause.status !== 'resolved';
           const isSelected = selectedClauseId === clause.id;
           const isPulsing = highlightId === clause.id;
           const diffColor = clause.lastModifiedBy === 'vendor' 

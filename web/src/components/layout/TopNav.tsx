@@ -1,13 +1,15 @@
 "use client";
 
 import { useStore, Role } from '@/store/useStore';
-import { Shield, Building2, Bell, BellRing } from 'lucide-react';
+import { Shield, Building2, Bell, BellRing, RefreshCcw, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function TopNav() {
-  const { activeRole, activeTenant, setActiveRole, notifications } = useStore();
+  const { activeRole, activeTenant, setActiveRole, notifications, resetState } = useStore();
   const pathname = usePathname();
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -47,6 +49,15 @@ export default function TopNav() {
         {/* Center: Navigation */}
         <div className="flex flex-1 items-center justify-center gap-6">
           <div className="flex items-center gap-6 text-sm font-medium">
+            {activeRole === 'vendor' && (
+              <>
+                <Link href="/upload" className={cn("transition-colors hover:text-foreground flex items-center gap-1.5", pathname === '/upload' ? "text-foreground font-semibold" : "text-muted-foreground")}>
+                  <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-xs font-bold mr-1">+ New</span>
+                  Upload Contract
+                </Link>
+                <div className="w-px h-4 bg-border" />
+              </>
+            )}
             <Link href="/workspace" className={cn("transition-colors hover:text-foreground", pathname?.startsWith('/workspace') ? "text-foreground font-semibold" : "text-muted-foreground")}>
               Legal Workspace
             </Link>
@@ -62,22 +73,52 @@ export default function TopNav() {
           </div>
         </div>
 
-        {/* Right: Persona Switcher + Notifications */}
+        {/* Right: Actions, Persona Switcher + Notifications */}
         <div className="flex items-center gap-3">
-          {activeRole === 'sales' && (
-            <Link href="/sales" className="relative p-2 rounded-lg hover:bg-muted transition-colors">
-              {unreadCount > 0 ? (
-                <BellRing className="h-5 w-5 text-amber-600 animate-bounce" />
-              ) : (
-                <Bell className="h-5 w-5 text-muted-foreground" />
-              )}
-              {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 h-5 w-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
-                  {unreadCount}
-                </span>
-              )}
-            </Link>
-          )}
+          
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="text-muted-foreground hover:text-indigo-600"
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              toast.success("Invite Link Copied", { description: "Share this link with the opposing counsel." });
+            }}
+            title="Copy Invite Link"
+          >
+            <UserPlus className="h-5 w-5" />
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="text-muted-foreground hover:text-red-600"
+            onClick={() => {
+              resetState();
+              toast.success("Demo Reset", { description: "All state has been restored to the initial mock data." });
+            }}
+            title="Reset Demo State"
+          >
+            <RefreshCcw className="h-5 w-5" />
+          </Button>
+
+          <Link href={activeRole === 'sales' ? '/sales' : '#'} onClick={(e) => {
+            if (activeRole !== 'sales') {
+              e.preventDefault();
+              toast.info("Notifications", { description: "You have unread updates." });
+            }
+          }} className="relative p-2 rounded-lg hover:bg-muted transition-colors">
+            {unreadCount > 0 ? (
+              <BellRing className="h-5 w-5 text-amber-600 animate-bounce" />
+            ) : (
+              <Bell className="h-5 w-5 text-muted-foreground" />
+            )}
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 h-5 w-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+                {unreadCount}
+              </span>
+            )}
+          </Link>
 
           <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-secondary">
             <Building2 className="h-4 w-4 text-muted-foreground" />

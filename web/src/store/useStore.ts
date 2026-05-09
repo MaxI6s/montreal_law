@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { Clause, ClauseStatus, SalesNotification, Comment, MOCK_NDA_CLAUSES, MOCK_MSA_CLAUSES, MOCK_INITIAL_NOTIFICATIONS, MOCK_INITIAL_COMMENTS } from '@/lib/mock-data';
+import { persist } from 'zustand/middleware';
+import { Clause, ClauseStatus, SalesNotification, Comment, MOCK_NDA_CLAUSES, MOCK_MSA_CLAUSES, MOCK_DPA_CLAUSES, MOCK_INITIAL_NOTIFICATIONS, MOCK_INITIAL_COMMENTS } from '@/lib/mock-data';
 
 export type Role = 'vendor' | 'client' | 'sales';
 
@@ -36,6 +37,9 @@ interface AppState {
   // Sign-off State
   signedOff: Record<string, boolean>;
   executeSignOff: (documentId: string) => void;
+
+  // Demo Reset
+  resetState: () => void;
 }
 
 // Group initial comments by clauseId
@@ -45,7 +49,9 @@ MOCK_INITIAL_COMMENTS.forEach((c) => {
   groupedComments[c.clauseId].push(c);
 });
 
-export const useStore = create<AppState>((set, get) => ({
+export const useStore = create<AppState>()(
+  persist(
+    (set, get) => ({
   activeRole: 'vendor',
   activeTenant: 'Dunder AI Inc.',
   
@@ -62,6 +68,7 @@ export const useStore = create<AppState>((set, get) => ({
   clauses: {
     'doc-nda-1': MOCK_NDA_CLAUSES,
     'doc-msa-1': MOCK_MSA_CLAUSES,
+    'doc-dpa-1': MOCK_DPA_CLAUSES,
   },
   
   selectedClauseId: null,
@@ -208,4 +215,25 @@ export const useStore = create<AppState>((set, get) => ({
   executeSignOff: (documentId) => set((state) => ({
     signedOff: { ...state.signedOff, [documentId]: true }
   })),
-}));
+
+  resetState: () => {
+    set({
+      activeRole: 'vendor',
+      activeTenant: 'Dunder AI Inc.',
+      activeDocumentId: 'doc-nda-1',
+      selectedClauseId: null,
+      clauses: {
+        'doc-nda-1': MOCK_NDA_CLAUSES,
+        'doc-msa-1': MOCK_MSA_CLAUSES,
+        'doc-dpa-1': MOCK_DPA_CLAUSES,
+      },
+      comments: groupedComments,
+      notifications: MOCK_INITIAL_NOTIFICATIONS,
+      signedOff: {},
+    });
+  }
+}),
+{
+  name: 'montreal-law-storage',
+}
+));

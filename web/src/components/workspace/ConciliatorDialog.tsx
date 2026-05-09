@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useStore } from '@/store/useStore';
-import { MOCK_CONCILIATOR_RESPONSE, MOCK_MSA_CONCILIATOR_RESPONSE, MOCK_IMPASSE_RESPONSE, MOCK_OVERRIDE_RESPONSE, PLAYBOOKS } from '@/lib/mock-data';
+import { MOCK_CONCILIATOR_RESPONSE, MOCK_MSA_CONCILIATOR_RESPONSE, MOCK_IMPASSE_RESPONSE, MOCK_OVERRIDE_RESPONSE, MOCK_OBLIGATIONS_RESPONSE, MOCK_IP_RESPONSE, PLAYBOOKS } from '@/lib/mock-data';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Bot, Sparkles, AlertTriangle, FileText, Check, ShieldAlert, Unlock } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Bot, Sparkles, AlertTriangle, FileText, Check, ShieldAlert, Unlock, Edit3, FileBarChart, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 interface ConciliatorDialogProps {
   open: boolean;
@@ -21,14 +23,20 @@ export default function ConciliatorDialog({ open, onOpenChange, targetClauseId }
   const [isImpasse, setIsImpasse] = useState(false);
   const [overrideTriggered, setOverrideTriggered] = useState(false);
   const [overrideProcessing, setOverrideProcessing] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [customText, setCustomText] = useState("");
+  const [showExecutiveSummary, setShowExecutiveSummary] = useState(false);
   
   const effectiveClauseId = targetClauseId || selectedClauseId;
 
   // Determine which clause we're conciliating to pick the right response
   const currentClauses = clauses[activeDocumentId] || [];
   const targetClause = currentClauses.find(c => c.id === effectiveClauseId);
-  const isTerminationClause = targetClause?.title?.toLowerCase().includes('termination');
-  const isMSALiability = targetClause?.title?.toLowerCase().includes('liability');
+  const titleLower = targetClause?.title?.toLowerCase() || '';
+  const isTerminationClause = titleLower.includes('termination');
+  const isMSALiability = titleLower.includes('liability');
+  const isObligations = titleLower.includes('obligations') || titleLower.includes('confidential information');
+  const isIP = titleLower.includes('intellectual property');
   
   useEffect(() => {
     if (open) {
@@ -37,6 +45,7 @@ export default function ConciliatorDialog({ open, onOpenChange, targetClauseId }
       setIsImpasse(false);
       setOverrideTriggered(false);
       setOverrideProcessing(false);
+      setEditMode(false);
       const timer = setTimeout(() => {
         setProcessing(false);
         // Termination clause triggers impasse
@@ -47,14 +56,24 @@ export default function ConciliatorDialog({ open, onOpenChange, targetClauseId }
   }, [open, isTerminationClause]);
 
   // Pick the right mock response
-  const response = isMSALiability ? MOCK_MSA_CONCILIATOR_RESPONSE : MOCK_CONCILIATOR_RESPONSE;
+  let response = MOCK_CONCILIATOR_RESPONSE; // fallback (usually remedies)
+  if (isMSALiability) response = MOCK_MSA_CONCILIATOR_RESPONSE;
+  else if (isObligations) response = MOCK_OBLIGATIONS_RESPONSE;
+  else if (isIP) response = MOCK_IP_RESPONSE;
+
   const overrideResponse = MOCK_OVERRIDE_RESPONSE;
+
+  // Initialize custom text when response is determined
+  useEffect(() => {
+    if (!processing && !overrideProcessing) {
+      setCustomText(overrideTriggered ? overrideResponse.proposedText : response.proposedText);
+    }
+  }, [processing, overrideProcessing, overrideTriggered, response, overrideResponse]);
 
   const handleAccept = () => {
     if (effectiveClauseId) {
-      const text = overrideTriggered ? overrideResponse.proposedText : response.proposedText;
       updateClauseStatus(activeDocumentId, effectiveClauseId, 'resolved');
-      updateClauseText(activeDocumentId, effectiveClauseId, text);
+      updateClauseText(activeDocumentId, effectiveClauseId, customText);
       setAccepted(true);
       setTimeout(() => onOpenChange(false), 1500);
     }
@@ -122,17 +141,60 @@ export default function ConciliatorDialog({ open, onOpenChange, targetClauseId }
                   <p className="text-sm text-amber-900 leading-relaxed">{MOCK_IMPASSE_RESPONSE.analysis}</p>
                   <p className="text-sm text-amber-800 mt-2 font-medium italic">&ldquo;{MOCK_IMPASSE_RESPONSE.suggestion}&rdquo;</p>
                 </div>
+                {showExecutiveSummary && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-4 bg-white p-5 rounded-xl border-2 border-indigo-100 shadow-sm">
+                    <h3 className="text-lg font-bold text-indigo-900 mb-3 flex items-center gap-2"><FileBarChart className="w-5 h-5 text-indigo-600" /> Executive Summary</h3>
+                    <div className="space-y-3 text-sm text-slate-700">
+                      <p><strong>Blocking Issue:</strong> Irreconcilable requirements regarding data breach liability caps.</p>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-red-50 p-3 rounded border border-red-100">
+                          <p className="font-semibold text-red-800">Vendor Requirement</p>
+                          <p>Hard cap at 12 months fees ($120k). No exceptions for data breach.</p>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border border-blue-100">
+                          <p className="font-semibold text-blue-800">Client Requirement</p>
+                          <p>Uncapped liability for data breach required by OSFI regulations.</p>
+                        </div>
+                      </div>
+                      <p><strong>Recommendation:</strong> A commercial override is required. Propose exploring a "Super Cap" (e.g., 5x fees) specifically for data breach to balance risk.</p>
+                      <Button 
+                        className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white" 
+                        onClick={() => {
+                          toast.success("Meeting Scheduled", { description: "Calendar invite sent to Legal VP and Sales Lead." });
+                          onOpenChange(false);
+                        }}
+                      >
+                        <Calendar className="w-4 h-4 mr-2" /> Schedule Escalation Meeting
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             ) : (
               <motion.div key="result" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <div className="bg-slate-50 p-4 rounded-lg border">
-                  <h4 className="text-sm font-semibold mb-2 text-slate-500 uppercase tracking-wider flex items-center gap-1"><FileText className="w-4 h-4" /> {overrideTriggered ? 'Revised Proposal (Post-Override)' : 'Proposed Compromise'}</h4>
+                  <h4 className="text-sm font-semibold mb-2 text-slate-500 uppercase tracking-wider flex items-center justify-between">
+                    <span className="flex items-center gap-1"><FileText className="w-4 h-4" /> {overrideTriggered ? 'Revised Proposal (Post-Override)' : 'Proposed Compromise'}</span>
+                    {!accepted && (
+                      <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={() => setEditMode(!editMode)}>
+                        <Edit3 className="w-3 h-3 mr-1" /> {editMode ? 'View Diff' : 'Edit Proposal'}
+                      </Button>
+                    )}
+                  </h4>
                   <div className="font-serif text-base leading-relaxed bg-white p-4 rounded border shadow-sm">
-                    {(() => {
-                      const r = overrideTriggered ? overrideResponse : response;
-                      const parts = r.proposedText.split(r.diff.added);
-                      return <>{parts[0]}<span className="bg-red-100 text-red-800 line-through px-1 rounded mx-1">{r.diff.deleted}</span><span className="bg-green-100 text-green-800 px-1 rounded mx-1">{r.diff.added}</span>{parts[1] || ''}</>;
-                    })()}
+                    {editMode ? (
+                      <Textarea 
+                        value={customText} 
+                        onChange={(e) => setCustomText(e.target.value)}
+                        className="min-h-[120px] font-serif text-base"
+                      />
+                    ) : (
+                      (() => {
+                        const r = overrideTriggered ? overrideResponse : response;
+                        const parts = r.proposedText.split(r.diff.added);
+                        return <>{parts[0]}<span className="bg-red-100 text-red-800 line-through px-1 rounded mx-1">{r.diff.deleted}</span><span className="bg-green-100 text-green-800 px-1 rounded mx-1">{r.diff.added}</span>{parts[1] || ''}</>;
+                      })()
+                    )}
                   </div>
                 </div>
                 <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
@@ -153,12 +215,17 @@ export default function ConciliatorDialog({ open, onOpenChange, targetClauseId }
         {!processing && !overrideProcessing && !accepted && (
           <DialogFooter className="mt-6 border-t pt-4">
             {isImpasse ? (
-              <>
-                <Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button>
-                <Button onClick={handleOverride} className="bg-amber-600 hover:bg-amber-700 text-white shadow-md">
+              <div className="flex w-full gap-2 flex-wrap sm:flex-nowrap">
+                <Button variant="outline" onClick={() => onOpenChange(false)} className="flex-1">Close</Button>
+                {!showExecutiveSummary && (
+                  <Button variant="secondary" onClick={() => setShowExecutiveSummary(true)} className="flex-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100">
+                    <FileBarChart className="w-4 h-4 mr-2" /> Executive Summary
+                  </Button>
+                )}
+                <Button onClick={handleOverride} className="flex-[2] bg-amber-600 hover:bg-amber-700 text-white shadow-md">
                   <Unlock className="w-4 h-4 mr-2" /> Override Constraint & Re-Run
                 </Button>
-              </>
+              </div>
             ) : (
               <>
                 <Button variant="outline" onClick={() => onOpenChange(false)}>Reject</Button>

@@ -54,6 +54,15 @@
 #   7. Scroll highlight pulse animation on clause selection
 #   8. Landing page testimonials / social proof section (3 cards)
 # All changes are client-side only. Build passes cleanly.
+#
+# QA BUG HUNT & FR UPDATES (2026-05-09T15:10):
+# =============================================
+# Addressed all 3 Bugs, 5 UX issues, and 5 FR implementations from the QA hunt:
+#   - Bugs Fixed: AI Conciliator response mapping, Resolved clauses diff display, State persistence via localStorage.
+#   - UX Enhanced: Legal notifications, Reset Demo button, Comment counts on resolved clauses, Dynamic CTA on landing page, Status transition animations.
+#   - FRs Implemented (Mock): Partial accept via Edit Proposal, Cancel pending conciliation, Invite link toast, Version history toast.
+#
+# All changes maintain the client-side mock architecture for the hackathon.
 
 generated: 2026-05-09
 last_updated: "2026-05-09T14:47:00-04:00"

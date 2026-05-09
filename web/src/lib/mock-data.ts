@@ -32,7 +32,7 @@ export interface SalesNotification {
 export interface DocumentInfo {
   id: string;
   title: string;
-  type: 'NDA' | 'MSA';
+  type: 'NDA' | 'MSA' | 'DPA';
   parties: {
     client: string;
     vendor: string;
@@ -64,6 +64,15 @@ export const MOCK_DOCUMENTS: DocumentInfo[] = [
     type: 'MSA',
     parties: {
       client: 'Initech Financial Group Inc.',
+      vendor: 'Dunder AI Inc.'
+    }
+  },
+  {
+    id: 'doc-dpa-1',
+    title: 'Data Processing Agreement',
+    type: 'DPA',
+    parties: {
+      client: 'Acme Corp.',
       vendor: 'Dunder AI Inc.'
     }
   }
@@ -278,6 +287,26 @@ export const MOCK_MSA_CONCILIATOR_RESPONSE = {
   rationale: "Market standard for SaaS MSAs involving regulated financial institutions is a tiered liability structure. An uncapped liability is existential for Vendor (an 18-month-old startup), while Client has regulatory obligations requiring heightened vendor accountability for data incidents. The 3x multiplier for data breaches is the most common market compromise — it provides Client meaningful recourse while keeping Vendor's exposure bounded. This aligns with standard practice in the Canadian financial services technology sector."
 };
 
+// ── Generic/Obligations Conciliator Response ──
+export const MOCK_OBLIGATIONS_RESPONSE = {
+  diff: {
+    deleted: "no less than reasonable care",
+    added: "a commercially reasonable degree of care"
+  },
+  proposedText: "Each Receiving Party agrees to: (a) hold the Disclosing Party's Confidential Information in strict confidence using at least the same degree of care it uses to protect its own confidential information, but a commercially reasonable degree of care; (b) not disclose Confidential Information to any third party without the prior written consent of the Disclosing Party.",
+  rationale: "Aligning the standard of care with 'commercially reasonable' creates a more objective, easily measurable threshold compared to 'reasonable care', satisfying both parties' desire for predictability."
+};
+
+// ── Intellectual Property Conciliator Response ──
+export const MOCK_IP_RESPONSE = {
+  diff: {
+    deleted: "Client shall own all rights to any custom features",
+    added: "Vendor grants Client a perpetual, irrevocable, royalty-free license to use and modify the custom features"
+  },
+  proposedText: "Vendor retains all Intellectual Property Rights in the Services and platform. However, Vendor grants Client a perpetual, irrevocable, royalty-free license to use and modify the custom features, integrations, or configurations developed specifically for Client and funded by Client.",
+  rationale: "Transferring IP ownership is fundamentally incompatible with the Vendor's SaaS model. Providing the Client with a perpetual, irrevocable license achieves the Client's business need of unhindered use of the custom work they funded, without fracturing the Vendor's codebase."
+};
+
 // ── Impasse Response (for termination clause — irreconcilable) ──
 export const MOCK_IMPASSE_RESPONSE = {
   reason: "The playbook constraints are mathematically irreconcilable as stated.",
@@ -380,5 +409,32 @@ export const MOCK_INITIAL_NOTIFICATIONS: SalesNotification[] = [
     documentId: 'doc-msa-1',
     timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
     read: false
+  }
+];
+
+export const MOCK_DPA_CLAUSES: Clause[] = [
+  {
+    id: 'c-dpa-1', documentId: 'doc-dpa-1', order: 1, title: '1. DEFINITIONS',
+    originalText: 'For the purposes of this Data Processing Agreement ("DPA"), "Personal Data", "Processing", "Controller", and "Processor" shall have the meanings given to them in the General Data Protection Regulation (EU) 2016/679 ("GDPR").',
+    currentText: 'For the purposes of this Data Processing Agreement ("DPA"), "Personal Data", "Processing", "Controller", and "Processor" shall have the meanings given to them in the General Data Protection Regulation (EU) 2016/679 ("GDPR").',
+    status: 'backlog', lastModifiedBy: null
+  },
+  {
+    id: 'c-dpa-2', documentId: 'doc-dpa-1', order: 2, title: '2. DATA PROCESSING OBLIGATIONS',
+    originalText: 'The Processor shall only process Personal Data on behalf of the Controller and in accordance with the documented instructions of the Controller, unless required to do so by applicable law.',
+    currentText: 'The Processor shall only process Personal Data on behalf of the Controller and in accordance with the documented instructions of the Controller, unless required to do so by applicable law.',
+    status: 'backlog', lastModifiedBy: null
+  },
+  {
+    id: 'c-dpa-3', documentId: 'doc-dpa-1', order: 3, title: '3. SUB-PROCESSORS',
+    originalText: 'The Processor shall not engage any sub-processor without the prior specific or general written authorization of the Controller. In the case of general written authorization, the Processor shall inform the Controller of any intended changes concerning the addition or replacement of other sub-processors.',
+    currentText: 'The Processor shall not engage any sub-processor without the prior specific or general written authorization of the Controller. In the case of general written authorization, the Processor shall inform the Controller of any intended changes concerning the addition or replacement of other sub-processors.',
+    status: 'backlog', lastModifiedBy: null
+  },
+  {
+    id: 'c-dpa-4', documentId: 'doc-dpa-1', order: 4, title: '4. SECURITY MEASURES',
+    originalText: 'The Processor shall implement appropriate technical and organizational measures to ensure a level of security appropriate to the risk, including encryption of Personal Data and the ability to ensure the ongoing confidentiality, integrity, availability, and resilience of processing systems.',
+    currentText: 'The Processor shall implement appropriate technical and organizational measures to ensure a level of security appropriate to the risk, including encryption of Personal Data and the ability to ensure the ongoing confidentiality, integrity, availability, and resilience of processing systems.',
+    status: 'backlog', lastModifiedBy: null
   }
 ];
