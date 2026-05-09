@@ -16,7 +16,7 @@ export default function LandingPage() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } }
   };
 
   return (
@@ -215,6 +215,69 @@ export default function LandingPage() {
                 <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
               </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ── Testimonials / Social Proof ── */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 relative z-10 border-t border-white/5">
+        <motion.div 
+          className="max-w-6xl mx-auto"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <motion.div variants={itemVariants} className="text-center mb-16">
+            <h2 className="text-4xl font-black tracking-tight">
+              Trusted by <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">legal leaders</span>
+            </h2>
+            <p className="text-slate-500 mt-3">From Bay Street to Silicon Valley — here&apos;s what they&apos;re saying.</p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                quote: "We closed a $4M SaaS deal in 3 days instead of 3 weeks. The AI Conciliator resolved our liability cap dispute in under 15 seconds — something that usually takes 6 rounds of emails.",
+                name: "Catherine Moreau",
+                title: "General Counsel",
+                firm: "Apex Ventures Capital",
+                gradient: "from-blue-500/10 to-cyan-500/10",
+                border: "border-blue-500/20"
+              },
+              {
+                quote: "The private playbook system is a game-changer. Our team can set firm-wide positions and the AI enforces them automatically. No more junior associates accidentally conceding on indemnification.",
+                name: "David Hartley, QC",
+                title: "Managing Partner",
+                firm: "Hartley Sinclair LLP",
+                gradient: "from-purple-500/10 to-pink-500/10",
+                border: "border-purple-500/20"
+              },
+              {
+                quote: "As a sales leader, I finally have visibility into deal blockers without pestering legal. The pipeline dashboard tells me exactly which clauses are holding up each deal.",
+                name: "Priya Sharma",
+                title: "VP of Enterprise Sales",
+                firm: "CloudScale Technologies",
+                gradient: "from-emerald-500/10 to-teal-500/10",
+                border: "border-emerald-500/20"
+              }
+            ].map((testimonial, i) => (
+              <motion.div 
+                key={i} 
+                variants={itemVariants}
+                className={`relative p-6 rounded-2xl border backdrop-blur-sm bg-gradient-to-br ${testimonial.gradient} ${testimonial.border} transition-all duration-300 hover:-translate-y-1`}
+              >
+                <div className="text-3xl text-white/20 font-serif mb-3">&ldquo;</div>
+                <p className="text-sm text-slate-300 leading-relaxed mb-6 italic">
+                  {testimonial.quote}
+                </p>
+                <div className="border-t border-white/10 pt-4">
+                  <p className="font-semibold text-white text-sm">{testimonial.name}</p>
+                  <p className="text-xs text-slate-500">{testimonial.title}</p>
+                  <p className="text-xs text-slate-600">{testimonial.firm}</p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>

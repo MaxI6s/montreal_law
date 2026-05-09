@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Clause, ClauseStatus, SalesNotification, MOCK_NDA_CLAUSES, MOCK_MSA_CLAUSES, MOCK_INITIAL_NOTIFICATIONS } from '@/lib/mock-data';
+import { Clause, ClauseStatus, SalesNotification, Comment, MOCK_NDA_CLAUSES, MOCK_MSA_CLAUSES, MOCK_INITIAL_NOTIFICATIONS, MOCK_INITIAL_COMMENTS } from '@/lib/mock-data';
 
 export type Role = 'vendor' | 'client' | 'sales';
 
@@ -22,13 +22,28 @@ interface AppState {
   addClause: (documentId: string) => void;
   removeClause: (documentId: string, clauseId: string) => void;
   
+  // Comment / Discussion State
+  comments: Record<string, Comment[]>;
+  addComment: (clauseId: string, text: string) => void;
+  
   // Notification State (for Sales)
   notifications: SalesNotification[];
   addNotification: (notification: Omit<SalesNotification, 'id' | 'timestamp' | 'read'>) => void;
   dismissNotification: (id: string) => void;
   markNotificationRead: (id: string) => void;
   unreadCount: () => number;
+
+  // Sign-off State
+  signedOff: Record<string, boolean>;
+  executeSignOff: (documentId: string) => void;
 }
+
+// Group initial comments by clauseId
+const groupedComments: Record<string, Comment[]> = {};
+MOCK_INITIAL_COMMENTS.forEach((c) => {
+  if (!groupedComments[c.clauseId]) groupedComments[c.clauseId] = [];
+  groupedComments[c.clauseId].push(c);
+});
 
 export const useStore = create<AppState>((set, get) => ({
   activeRole: 'vendor',
@@ -137,6 +152,29 @@ export const useStore = create<AppState>((set, get) => ({
     selectedClauseId: state.selectedClauseId === clauseId ? null : state.selectedClauseId
   })),
 
+  // ── Comments / Discussion ──
+  comments: groupedComments,
+
+  addComment: (clauseId, text) => set((state) => {
+    const role = state.activeRole as 'vendor' | 'client';
+    const authorName = role === 'vendor' ? 'Sarah Chen' : 'James Whitfield';
+    const newComment: Comment = {
+      id: `comment-${Date.now()}`,
+      clauseId,
+      author: authorName,
+      role,
+      text,
+      timestamp: new Date().toISOString(),
+    };
+    const existing = state.comments[clauseId] || [];
+    return {
+      comments: {
+        ...state.comments,
+        [clauseId]: [...existing, newComment],
+      }
+    };
+  }),
+
   // ── Notifications ──
   notifications: MOCK_INITIAL_NOTIFICATIONS,
   
@@ -163,4 +201,11 @@ export const useStore = create<AppState>((set, get) => ({
   })),
   
   unreadCount: () => get().notifications.filter(n => !n.read).length,
+
+  // ── Sign-Off ──
+  signedOff: {},
+  
+  executeSignOff: (documentId) => set((state) => ({
+    signedOff: { ...state.signedOff, [documentId]: true }
+  })),
 }));

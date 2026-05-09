@@ -27,10 +27,18 @@ export default function TopNav() {
     }
   };
 
+  const accentStrip = (role: Role) => {
+    switch (role) {
+      case 'vendor': return 'bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500';
+      case 'client': return 'bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500';
+      case 'sales': return 'bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500';
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between px-4">
-        {/* Left: Branding — clickable to home */}
+        {/* Left: Branding */}
         <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity group">
           <Shield className="h-6 w-6 text-indigo-600 group-hover:scale-110 transition-transform" />
           <span className="font-bold text-lg tracking-tight">Montreal Law</span>
@@ -39,22 +47,10 @@ export default function TopNav() {
         {/* Center: Navigation */}
         <div className="flex flex-1 items-center justify-center gap-6">
           <div className="flex items-center gap-6 text-sm font-medium">
-            <Link 
-              href="/workspace" 
-              className={cn(
-                "transition-colors hover:text-foreground",
-                pathname?.startsWith('/workspace') ? "text-foreground font-semibold" : "text-muted-foreground"
-              )}
-            >
+            <Link href="/workspace" className={cn("transition-colors hover:text-foreground", pathname?.startsWith('/workspace') ? "text-foreground font-semibold" : "text-muted-foreground")}>
               Legal Workspace
             </Link>
-            <Link 
-              href="/sales" 
-              className={cn(
-                "transition-colors hover:text-foreground flex items-center gap-1.5",
-                pathname === '/sales' ? "text-foreground font-semibold" : "text-muted-foreground"
-              )}
-            >
+            <Link href="/sales" className={cn("transition-colors hover:text-foreground flex items-center gap-1.5", pathname === '/sales' ? "text-foreground font-semibold" : "text-muted-foreground")}>
               Vendor Sales
               {unreadCount > 0 && activeRole !== 'sales' && (
                 <span className="relative flex h-2 w-2">
@@ -68,7 +64,6 @@ export default function TopNav() {
 
         {/* Right: Persona Switcher + Notifications */}
         <div className="flex items-center gap-3">
-          {/* Notification Bell (visible for sales) */}
           {activeRole === 'sales' && (
             <Link href="/sales" className="relative p-2 rounded-lg hover:bg-muted transition-colors">
               {unreadCount > 0 ? (
@@ -84,13 +79,11 @@ export default function TopNav() {
             </Link>
           )}
 
-          {/* Tenant Badge */}
           <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-secondary">
             <Building2 className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-semibold">{activeTenant}</span>
           </div>
           
-          {/* Role Switcher */}
           <div className="flex items-center gap-2">
             <div className={cn("h-2.5 w-2.5 rounded-full shadow-sm", roleColor(activeRole))} />
             <select 
@@ -105,6 +98,8 @@ export default function TopNav() {
           </div>
         </div>
       </div>
+      {/* Role accent strip */}
+      <div className={cn("h-[2px] w-full transition-all duration-500", accentStrip(activeRole))} />
     </header>
   );
 }

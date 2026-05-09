@@ -1,5 +1,5 @@
 # generated: 2026-05-09
-# last_updated: 2026-05-09
+# last_updated: 2026-05-09T14:47:00-04:00
 # project: montreal_law
 # project_key: NOKEY
 # tracking_system: file-system
@@ -33,9 +33,30 @@
 # - Stories can be worked in parallel if team capacity allows
 # - Developer typically creates next story after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+#
+# IMPLEMENTATION NOTES (2026-05-09):
+# ==================================
+# All UI work so far is CLIENT-SIDE MOCKUP only (Zustand + mock-data.ts).
+# No backend (Prisma, Server Actions, API routes) has been built yet.
+# A colleague is working on the AI/backend foundation separately.
+# Stories marked "in-progress" have working UI but lack backend persistence.
+# No formal story spec files exist — work was done directly in the codebase.
+#
+# SPRINT 2 UPDATES (2026-05-09T14:47):
+# =====================================
+# Delivered 8 front-end enhancements ("Mockup Enhancement Sprint"):
+#   1. MSA mock data expanded from 3→8 clauses with varied negotiation states
+#   2. Discussion thread comment UX replaces toast-only mock (pre-seeded 6 comments)
+#   3. DocumentViewer headers are now data-driven (no longer hardcoded to NDA)
+#   4. Persona visual differentiation: role-colored accent strip + button tints
+#   5. Mock sign-off & export flow with celebration UI
+#   6. AI Impasse state + Override & Re-Run flow for termination clauses
+#   7. Scroll highlight pulse animation on clause selection
+#   8. Landing page testimonials / social proof section (3 cards)
+# All changes are client-side only. Build passes cleanly.
 
 generated: 2026-05-09
-last_updated: 2026-05-09
+last_updated: "2026-05-09T14:47:00-04:00"
 project: montreal_law
 project_key: NOKEY
 tracking_system: file-system
@@ -43,42 +64,42 @@ story_location: "{project-root}/_bmad-output/implementation-artifacts"
 
 development_status:
   # === Epic 1: Workspace & Identity Management ===
-  epic-1: backlog
-  1-1-project-initialization-mock-authentication-core: backlog
-  1-2-tenant-user-data-schema: backlog
-  1-3-tenant-isolation-rbac-enforcement: backlog
+  epic-1: in-progress
+  1-1-project-initialization-mock-authentication-core: in-progress   # ✅ Next.js 15 running, Zustand auth store, role switcher (Vendor Legal/Client Legal/Vendor Sales). TopNav now has role-colored accent strip (green/blue/amber).
+  1-2-tenant-user-data-schema: backlog                               # No Prisma schema or database yet (colleague working on backend)
+  1-3-tenant-isolation-rbac-enforcement: in-progress                  # ✅ Client-side RBAC: sales redirect to pipeline dashboard, edit restrictions by role. Visual persona differentiation (accent colors, button tints). No server-side middleware.
   epic-1-retrospective: optional
 
   # === Epic 2: Core Document Negotiation Engine ===
-  epic-2: backlog
-  2-1-contract-upload-clause-parsing: backlog
-  2-2-dual-pane-ui-foundation: backlog
-  2-3-kanban-clause-tracking: backlog
-  2-4-native-redlining-commenting: backlog
-  2-5-concurrent-editing-opponent-invites: backlog
-  2-6-versioning-sign-off-export: backlog
+  epic-2: in-progress
+  2-1-contract-upload-clause-parsing: backlog                         # Mock data only (mock-data.ts) — no .docx upload or parsing. MSA now has 8 realistic clauses from scenario docs.
+  2-2-dual-pane-ui-foundation: in-progress                            # ✅ Full dual-pane layout: DocumentViewer (left, now data-driven headers) + ClauseBoard (right), synchronized scroll with highlight pulse animation
+  2-3-kanban-clause-tracking: in-progress                             # ✅ Clause cards with grouped sections (Action Required/Awaiting Response/Backlog/Resolved), status badges, ping-pong state machine. MSA has varied states for demo richness.
+  2-4-native-redlining-commenting: in-progress                       # ✅ Track-changes diff view with color-coded authorship (vendor=green, client=blue). Discussion threads now inline on clause cards (replaces toast mock). Pre-seeded 6 comments.
+  2-5-concurrent-editing-opponent-invites: backlog                    # No real-time sync, WebSocket, or invite flow
+  2-6-versioning-sign-off-export: in-progress                         # ✅ Mock sign-off banner appears when all clauses resolved. "Execute Mutual Sign-Off" button with celebration UI. Mock "Download .docx" button. No real versioning or export.
   epic-2-retrospective: optional
 
   # === Epic 3: Playbook Management & Private AI Copilot ===
   epic-3: backlog
-  3-1-playbook-data-model-manual-entry: backlog
-  3-2-playbook-ingestion-review-interface: backlog
-  3-3-private-ai-copilot-scanning-violation-detection: backlog
-  3-4-private-ai-copilot-redline-suggestions: backlog
+  3-1-playbook-data-model-manual-entry: backlog                       # No playbook UI or data model. Playbook rules exist as static PLAYBOOKS object in mock-data.ts with expanded vendor/client constraints for Remedies, Liability, Termination, IP.
+  3-2-playbook-ingestion-review-interface: backlog                    # No ingestion flow
+  3-3-private-ai-copilot-scanning-violation-detection: backlog        # No copilot implementation
+  3-4-private-ai-copilot-redline-suggestions: backlog                 # No copilot suggestions
   epic-3-retrospective: optional
 
   # === Epic 4: The AI Conciliator (Dual-Sided Mediation) ===
-  epic-4: backlog
-  4-1-requesting-conciliation-mutual-consent: backlog
-  4-2-ai-conciliator-processing-ui-locking: backlog
-  4-3-conciliator-proposal-generation-industry-standard-grounding: backlog
-  4-4-impasse-manual-overrides: backlog
-  4-5-approving-rejecting-ai-compromises: backlog
+  epic-4: in-progress
+  4-1-requesting-conciliation-mutual-consent: in-progress             # ✅ UI button to request conciliation exists; mock mutual consent (no real handshake)
+  4-2-ai-conciliator-processing-ui-locking: in-progress               # ✅ Pulsing skeleton animation, lock icon on processing clauses, dialog with loading state
+  4-3-conciliator-proposal-generation-industry-standard-grounding: in-progress  # ✅ Mock AI responses: NDA (remedies), MSA (liability cap) with diff views + rationale blocks. No actual LLM call.
+  4-4-impasse-manual-overrides: in-progress                           # ✅ Impasse detection for termination clauses — red-tinted UI with irreconcilable constraint breakdown. "Override Constraint & Re-Run" flow generates revised proposal. All mock.
+  4-5-approving-rejecting-ai-compromises: in-progress                 # ✅ Accept/Reject buttons in ConciliatorDialog, updates clause status and text on accept. Post-impasse override accept also works.
   epic-4-retrospective: optional
 
   # === Epic 5: Pipeline Visibility & Compliance ===
-  epic-5: backlog
-  5-1-sales-pipeline-dashboard: backlog
-  5-2-automated-data-incineration-metadata-decoupling: backlog
-  5-3-manual-purge-override: backlog
+  epic-5: in-progress
+  5-1-sales-pipeline-dashboard: in-progress                           # ✅ Dashboard with clause breakdowns, deal stages, notification inbox, "Vendor Sales" branding, read-only access. Now shows richer MSA data (1/8 resolved vs 1/3).
+  5-2-automated-data-incineration-metadata-decoupling: backlog        # No backend purge logic
+  5-3-manual-purge-override: backlog                                  # No manual purge UI or backend
   epic-5-retrospective: optional

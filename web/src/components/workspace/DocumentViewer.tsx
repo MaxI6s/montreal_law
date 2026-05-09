@@ -3,22 +3,28 @@
 import { useStore } from '@/store/useStore';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Edit3, CheckCircle2, Lock } from 'lucide-react';
-import { ClauseStatus } from '@/lib/mock-data';
+import { ClauseStatus, MOCK_DOCUMENTS } from '@/lib/mock-data';
 
 export default function DocumentViewer() {
   const { activeDocumentId, clauses, selectedClauseId, setSelectedClause, activeRole } = useStore();
   const currentClauses = clauses[activeDocumentId] || [];
+  const activeDoc = MOCK_DOCUMENTS.find(d => d.id === activeDocumentId);
   
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
   
-  // Auto-scroll when selectedClauseId changes
+  // Auto-scroll when selectedClauseId changes + trigger highlight pulse
   useEffect(() => {
     if (selectedClauseId) {
       const el = document.getElementById(`doc-clause-${selectedClauseId}`);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setHighlightId(selectedClauseId);
+        // Clear the pulse after animation completes
+        const timer = setTimeout(() => setHighlightId(null), 1800);
+        return () => clearTimeout(timer);
       }
     }
   }, [selectedClauseId]);
@@ -63,13 +69,13 @@ export default function DocumentViewer() {
   return (
     <ScrollArea className="h-full w-full p-8" ref={scrollAreaRef}>
       <div className="max-w-2xl mx-auto font-serif space-y-6 pb-32">
-        {/* Document Header */}
+        {/* Document Header — data-driven */}
         <div className="text-center mb-8 pb-6 border-b border-slate-200">
           <h1 className="text-2xl font-bold font-sans text-slate-900 tracking-tight">
-            MUTUAL NON-DISCLOSURE AGREEMENT
+            {activeDoc?.title?.toUpperCase() || 'CONTRACT DOCUMENT'}
           </h1>
           <p className="text-sm text-muted-foreground mt-2 font-sans">
-            Between <strong>Dunder AI Inc.</strong> and <strong>Initech Financial Group Inc.</strong>
+            Between <strong>{activeDoc?.parties.vendor || 'Party A'}</strong> and <strong>{activeDoc?.parties.client || 'Party B'}</strong>
           </p>
           <p className="text-xs text-muted-foreground mt-1 font-sans">
             Effective Date: May 9, 2026
@@ -79,6 +85,7 @@ export default function DocumentViewer() {
         {currentClauses.map((clause) => {
           const hasChanges = clause.originalText !== clause.currentText;
           const isSelected = selectedClauseId === clause.id;
+          const isPulsing = highlightId === clause.id;
           const diffColor = clause.lastModifiedBy === 'vendor' 
             ? { bg: 'bg-emerald-50', border: 'border-emerald-100', text: 'text-emerald-700', label: 'Vendor Legal Edit' }
             : { bg: 'bg-blue-50', border: 'border-blue-100', text: 'text-blue-700', label: 'Client Legal Edit' };
@@ -93,7 +100,8 @@ export default function DocumentViewer() {
                 isSelected 
                   ? "bg-primary/5 border-primary/20 shadow-sm" 
                   : "border-transparent hover:bg-muted/50 hover:border-muted",
-                clause.status === 'pending-conciliation' && "opacity-60 pointer-events-none"
+                clause.status === 'pending-conciliation' && "opacity-60 pointer-events-none",
+                isPulsing && "ring-2 ring-indigo-400/60 ring-offset-2 animate-[highlight-pulse_1.8s_ease-out_forwards]"
               )}
             >
               {/* Clause Header */}
@@ -139,13 +147,13 @@ export default function DocumentViewer() {
         <div className="mt-16 pt-8 border-t border-slate-300">
           <div className="grid grid-cols-2 gap-8 font-sans text-sm text-muted-foreground">
             <div>
-              <p className="font-semibold text-foreground mb-4">DUNDER AI INC.</p>
+              <p className="font-semibold text-foreground mb-4">{activeDoc?.parties.vendor?.toUpperCase() || 'PARTY A'}</p>
               <div className="border-b border-slate-300 mb-1 h-8" />
               <p>Authorized Signatory</p>
               <p className="mt-2">Date: _______________</p>
             </div>
             <div>
-              <p className="font-semibold text-foreground mb-4">INITECH FINANCIAL GROUP INC.</p>
+              <p className="font-semibold text-foreground mb-4">{activeDoc?.parties.client?.toUpperCase() || 'PARTY B'}</p>
               <div className="border-b border-slate-300 mb-1 h-8" />
               <p>Authorized Signatory</p>
               <p className="mt-2">Date: _______________</p>
