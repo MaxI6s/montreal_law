@@ -28,14 +28,16 @@ export default function OnlyOfficeViewer() {
     }
   };
 
-  const hostUrl = "http://host.docker.internal:3000";
+  const hostUrl = "http://10.0.1.168:3000";
 
   const getDocInfo = () => {
+    // Force the working sample for all documents in the demo
+    const file = "nda_dunder_original.docx";
     switch (activeDocumentId) {
-      case 'doc-nda-1': return { title: "NDA.docx", file: "nda.docx" };
-      case 'doc-dpa-1': return { title: "DPA.docx", file: "dpa.docx" };
-      case 'doc-msa-1': return { title: "MSA.docx", file: "msa.docx" };
-      default: return { title: "Document.docx", file: "contract.docx" };
+      case 'doc-nda-1': return { title: "NDA.docx", file };
+      case 'doc-dpa-1': return { title: "DPA.docx", file };
+      case 'doc-msa-1': return { title: "MSA.docx", file };
+      default: return { title: "Document.docx", file };
     }
   };
 
@@ -44,11 +46,12 @@ export default function OnlyOfficeViewer() {
   const config = {
     document: {
       fileType: "docx",
-      key: `doc-${activeDocumentId}-${activeRole}`, 
+      key: `forced-v3-${activeDocumentId}-${activeRole}`, 
       title: docInfo.title,
       url: `${hostUrl}/samples/${docInfo.file}`,
     },
     documentType: "word",
+    type: "embedded",
     editorConfig: {
       callbackUrl: `${hostUrl}/api/onlyoffice/callback`,
       user: {
@@ -58,14 +61,17 @@ export default function OnlyOfficeViewer() {
       mode: activeRole === 'sales' ? 'view' : 'edit',
       customization: {
         autosave: true,
-        chat: true,
-        comments: true,
+        chat: false,
+        comments: false,
         compactHeader: true,
         compactToolbar: false,
         help: false,
         hideNotes: false,
         hideRightMenu: false,
+        hideRulers: false,
         showReviewChanges: true,
+        status: true,
+        toolbar: true,
       }
     },
     height: "100%",

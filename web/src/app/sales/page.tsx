@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function SalesDashboard() {
   const { clauses, notifications, markNotificationRead, dismissNotification, setActiveRole, activeRole } = useStore();
