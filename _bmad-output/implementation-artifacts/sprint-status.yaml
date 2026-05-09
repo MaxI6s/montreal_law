@@ -1,5 +1,5 @@
 # generated: 2026-05-09
-# last_updated: 2026-05-09T14:47:00-04:00
+# last_updated: 2026-05-09T16:51:24-04:00
 # project: montreal_law
 # project_key: NOKEY
 # tracking_system: file-system
@@ -65,7 +65,7 @@
 # All changes maintain the client-side mock architecture for the hackathon.
 
 generated: 2026-05-09
-last_updated: "2026-05-09T14:47:00-04:00"
+last_updated: "2026-05-09T16:51:24-04:00"
 project: montreal_law
 project_key: NOKEY
 tracking_system: file-system
@@ -87,6 +87,9 @@ development_status:
   2-4-native-redlining-commenting: in-progress                       # ✅ Track-changes diff view with color-coded authorship (vendor=green, client=blue). Discussion threads now inline on clause cards (replaces toast mock). Pre-seeded 6 comments.
   2-5-concurrent-editing-opponent-invites: backlog                    # No real-time sync, WebSocket, or invite flow
   2-6-versioning-sign-off-export: in-progress                         # ✅ Mock sign-off banner appears when all clauses resolved. "Execute Mutual Sign-Off" button with celebration UI. Mock "Download .docx" button. No real versioning or export.
+  2-7-onlyoffice-infrastructure-api: backlog                          # NEW: Infrastructure for actual .docx rendering. Requires Docker Documentserver.
+  2-8-frontend-onlyoffice-react-integration: backlog                 # NEW: Integration of @onlyoffice/document-editor-react.
+  2-9-kanban-to-onlyoffice-api-sync: backlog                         # NEW: State synchronization via Connector API.
   epic-2-retrospective: optional
 
   # === Epic 3: Playbook Management & Private AI Copilot ===

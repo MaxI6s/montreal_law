@@ -230,6 +230,35 @@ So that the document can be sent for final signature.
 **Then** the document state is permanently frozen.
 **And** either party can export a full-fidelity `.docx` file containing the clean, agreed-upon text.
 
+### Story 2.7: ONLYOFFICE Infrastructure & API
+
+As a Developer,
+I want to set up the ONLYOFFICE Document Server infrastructure and a Next.js callback API,
+So that we can render and persist actual `.docx` files.
+
+**Acceptance Criteria:**
+- ONLYOFFICE Document Server is reachable.
+- Next.js API route `/api/onlyoffice/callback` successfully receives and logs save events.
+
+### Story 2.8: Frontend ONLYOFFICE React Integration
+
+As a Lawyer,
+I want to view and edit the contract using a real ONLYOFFICE editor instead of a mock viewer,
+So that I can use standard formatting and native track-changes.
+
+**Acceptance Criteria:**
+- `DocumentViewer.tsx` is replaced by `@onlyoffice/document-editor-react`.
+- Document loads successfully in the workspace view.
+
+### Story 2.9: Kanban to ONLYOFFICE API Sync
+
+As a Lawyer,
+I want the Kanban clause panel to remain synchronized with the ONLYOFFICE viewer,
+So that clicking a card still scrolls the document to the correct location.
+
+**Acceptance Criteria:**
+- Clicks on Kanban cards trigger the ONLYOFFICE Connector API to navigate to document sections.
+
 ## Epic 3: Playbook Management & Private AI Copilot
 
 **Goal:** Admins can ingest or manually create their firm's private rulebook (with fallbacks and non-negotiables). Lawyers can then invoke their "Private Copilot" to instantly scan an opponent's document, highlight violations, and draft compliant redlines—completely hidden from the other side.

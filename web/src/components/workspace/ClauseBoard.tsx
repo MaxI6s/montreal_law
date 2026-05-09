@@ -101,8 +101,8 @@ export default function ClauseBoard() {
 
   const handleRemove = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    removeClause(activeDocumentId, id);
-    toast.success("Clause Removed", { description: "The clause has been stricken from the record." });
+    updateClauseText(activeDocumentId, id, "[Intentionally Omitted]");
+    toast.success("Clause Omitted", { description: "The clause has been stricken as a proposed edit." });
   };
 
   const handleNotifySales = (e: React.MouseEvent, clause: Clause) => {
@@ -302,8 +302,13 @@ function ClauseCard({
   };
 
   const canEdit = !isSales && !isResolved && !isProcessing && isActionable;
-  const canAccept = !isSales && !isResolved && !isProcessing && clause.status !== 'backlog';
-  const canRemove = !isSales && !isResolved && !isProcessing;
+  const canAccept = !isSales && !isResolved && !isProcessing && (
+    (clause.status === 'backlog' && isClient) ||
+    (clause.status === 'vendor-modified' && isClient) ||
+    (clause.status === 'client-modified' && isVendor) ||
+    (clause.status === 'disputed' && clause.lastModifiedBy !== activeRole)
+  );
+  const canRemove = !isSales && !isResolved && !isProcessing && isActionable;
   const canCounterPropose = !isSales && !isResolved && !isProcessing && isActionable && (
     (isClient && clause.status === 'vendor-modified') ||
     (isVendor && clause.status === 'client-modified') ||
@@ -318,14 +323,6 @@ function ClauseCard({
   return (
     <Card id={`card-clause-${clause.id}`} onClick={onSelect}
       className={cn("cursor-pointer transition-all border-2 duration-200 group relative", borderColor(), isSelected ? "bg-card" : "bg-card/80 hover:bg-card")}>
-      {canRemove && (
-        <Button variant="ghost" size="icon"
-          className="absolute -top-3 -right-3 h-8 w-8 rounded-full bg-red-100 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity border border-red-200 hover:bg-red-200 z-10"
-          onClick={onRemove} title="Remove Clause">
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      )}
-
       <CardHeader className="p-4 pb-2">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-md font-bold flex items-center gap-2">
@@ -382,9 +379,16 @@ function ClauseCard({
               <Clock className="w-4 h-4 mr-1.5" /> History
             </Button>
             {canEdit && (
-              <Button variant="ghost" size="sm" className="h-8 px-2 text-muted-foreground hover:text-foreground" onClick={onStartEdit}>
-                <Edit3 className="w-4 h-4 mr-1.5" /> {clause.status === 'backlog' ? 'Propose Edit' : 'Re-Edit'}
-              </Button>
+              <>
+                <Button variant="ghost" size="sm" className="h-8 px-2 text-muted-foreground hover:text-foreground" onClick={onStartEdit}>
+                  <Edit3 className="w-4 h-4 mr-1.5" /> {clause.status === 'backlog' ? 'Propose Edit' : 'Re-Edit'}
+                </Button>
+                {canRemove && (
+                  <Button variant="ghost" size="sm" className="h-8 px-2 text-muted-foreground hover:text-red-600" onClick={onRemove}>
+                    <Trash2 className="w-4 h-4 mr-1.5" /> Remove
+                  </Button>
+                )}
+              </>
             )}
             {canNotifySales && (
               <Button variant="ghost" size="sm" className="h-8 px-2 text-muted-foreground hover:text-amber-600" onClick={onNotifySales}>
