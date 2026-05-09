@@ -130,11 +130,11 @@ export default function TopNav() {
             <select 
               value={activeRole} 
               onChange={(e) => setActiveRole(e.target.value as Role)}
-              className="h-8 w-[150px] rounded-md border border-input bg-primary text-primary-foreground px-3 py-1 text-sm shadow-sm focus-visible:outline-none cursor-pointer"
+              className="h-9 w-[140px] rounded-full border-2 border-slate-800 bg-slate-900 text-white px-3 py-1 text-xs font-bold shadow-md focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer hover:border-slate-700"
             >
-              <option value="vendor">Vendor Legal</option>
-              <option value="client">Client Legal</option>
-              <option value="sales">Vendor Sales</option>
+              <option value="vendor" className="bg-slate-900">Vendor Legal</option>
+              <option value="client" className="bg-slate-900">Client Legal</option>
+              <option value="sales" className="bg-slate-900">Vendor Sales</option>
             </select>
           </div>
         </div>

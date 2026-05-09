@@ -1,6 +1,6 @@
 "use client";
 
-import DocumentViewer from '@/components/workspace/DocumentViewer';
+import OnlyOfficeViewer from '@/components/workspace/OnlyOfficeViewer';
 import ClauseBoard from '@/components/workspace/ClauseBoard';
 import { useStore } from '@/store/useStore';
 import { useEffect, useRef } from 'react';
@@ -47,7 +47,7 @@ export default function WorkspaceEditorPage() {
     <div className="flex h-full w-full bg-background">
       {/* Left Pane */}
       <div className="w-1/2 h-full border-r bg-slate-50">
-        <DocumentViewer />
+        <OnlyOfficeViewer />
       </div>
       
       {/* Right Pane */}

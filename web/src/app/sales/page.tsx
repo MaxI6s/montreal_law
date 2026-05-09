@@ -12,6 +12,7 @@ import {
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export default function SalesDashboard() {
   const { clauses, notifications, markNotificationRead, dismissNotification, setActiveRole, activeRole } = useStore();
@@ -170,12 +171,21 @@ export default function SalesDashboard() {
                         </div>
                       </div>
 
-                      {/* Stage Badge */}
+                      {/* Stage Badge & Action */}
                       <div className="flex items-center justify-between pt-2 border-t">
-                        <span className="text-sm text-muted-foreground">Deal Stage</span>
                         <Badge className={cn("font-medium border", config.color)}>
                           <StageIcon className="w-3 h-3 mr-1" /> {config.label}
                         </Badge>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 font-semibold"
+                          asChild
+                        >
+                          <Link href={`/workspace/${doc.id}`}>
+                            View Document <ArrowRight className="w-4 h-4 ml-1.5" />
+                          </Link>
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
