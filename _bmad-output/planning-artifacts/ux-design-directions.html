@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montreal Law - Design Directions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap');
+        .font-serif { font-family: 'Merriweather', serif; }
+        .font-sans { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-zinc-100 font-sans text-zinc-900 h-screen flex flex-col overflow-hidden">
+    
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-zinc-200 h-14 flex items-center justify-between px-6 shrink-0">
+        <div class="flex items-center gap-4">
+            <div class="font-bold text-lg tracking-tight">Montreal Law</div>
+            <div class="h-4 w-px bg-zinc-300"></div>
+            <div class="text-sm font-medium text-zinc-600">MSA_AcmeCorp_v3.docx</div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button class="text-sm font-medium px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">Export Contract</button>
+        </div>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 flex overflow-hidden">
+        
+        <!-- Left Pane: Raw Document -->
+        <section class="w-1/2 border-r border-zinc-200 bg-zinc-50 overflow-y-auto p-8 flex justify-center">
+            <div class="bg-white border border-zinc-200 shadow-sm w-full max-w-2xl min-h-[1056px] p-12 font-serif text-base leading-relaxed text-zinc-800">
+                <h1 class="text-2xl font-bold mb-6 text-center">MASTER SERVICES AGREEMENT</h1>
+                
+                <p class="mb-4">This Master Services Agreement (the "Agreement") is entered into as of this day...</p>
+                
+                <h2 class="text-xl font-bold mt-8 mb-4">4. Term and Termination</h2>
+                <div class="p-2 -mx-2 bg-yellow-50 border-l-4 border-yellow-400">
+                    <p class="mb-2"><strong>4.1 Termination for Convenience.</strong> Either party may terminate this Agreement for convenience upon <span class="line-through text-red-500">ninety (90)</span> <span class="text-emerald-600 underline">thirty (30)</span> days prior written notice to the other party.</p>
+                </div>
+                
+                <p class="mt-4"><strong>4.2 Termination for Cause.</strong> Either party may terminate this Agreement immediately upon written notice if the other party materially breaches...</p>
+            </div>
+        </section>
+
+        <!-- Right Pane: Kanban & Conciliator -->
+        <section class="w-1/2 bg-zinc-100 overflow-y-auto p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-bold">Clause Extraction</h2>
+                <div class="flex gap-2">
+                    <span class="px-3 py-1 bg-white border border-zinc-200 rounded-full text-xs font-medium text-zinc-600">4 Unresolved</span>
+                    <span class="px-3 py-1 bg-white border border-zinc-200 rounded-full text-xs font-medium text-zinc-600">12 Agreed</span>
+                </div>
+            </div>
+
+            <!-- Kanban Columns -->
+            <div class="flex gap-4 h-full">
+                
+                <!-- Needs Review Column -->
+                <div class="w-1/2 flex flex-col gap-3">
+                    <div class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-2">Needs Review</div>
+                    
+                    <!-- Clause Card -->
+                    <div class="bg-white border border-zinc-200 rounded-lg p-4 shadow-sm relative overflow-hidden">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400"></div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold text-zinc-500">Section 4.1</span>
+                            <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-medium">Conflict</span>
+                        </div>
+                        <h3 class="font-semibold mb-2 text-sm">Termination for Convenience</h3>
+                        <p class="text-xs text-zinc-600 mb-4 line-clamp-2">Vendor requested 30 days notice. Your playbook requires 90 days minimum.</p>
+                        
+                        <button class="w-full py-2 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-md text-xs font-bold hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Request AI Conciliation
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resolved Column -->
+                <div class="w-1/2 flex flex-col gap-3">
+                    <div class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-2">Resolved</div>
+                    
+                    <!-- Resolved Card -->
+                    <div class="bg-white border border-zinc-200 rounded-lg p-4 opacity-75">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold text-zinc-500">Section 6.2</span>
+                            <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-medium">Agreed</span>
+                        </div>
+                        <h3 class="font-semibold mb-2 text-sm">Limitation of Liability</h3>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>
